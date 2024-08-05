@@ -1,22 +1,11 @@
 package com.example.githubprconsumer.message;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.NoArgsConstructor;
-
-@Entity
-@NoArgsConstructor
 public class DefaultMessage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String prTitle;
-    private String prLink;
-    private String prAuthor;
-    private String reviewAssignee;
+    private final String prTitle;
+    private final String prLink;
+    private final String prAuthor;
+    private final String reviewAssignee;
 
     public DefaultMessage(String prTitle, String prLink, String prAuthor, String reviewAssignee) {
         this.prTitle = prTitle;
