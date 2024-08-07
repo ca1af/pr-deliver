@@ -1,7 +1,7 @@
 package com.example.githubprconsumer.message;
 
-import com.example.githubprconsumer.base.BadRequestException;
-import com.example.githubprconsumer.base.NotFoundException;
+import com.example.githubprconsumer.global.BadRequestException;
+import com.example.githubprconsumer.global.NotFoundException;
 
 public class MessageTemplateException extends RuntimeException {
 
