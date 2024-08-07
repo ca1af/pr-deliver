@@ -19,3 +19,11 @@ spring:
         show_sql: true
         format_sql: true
     open-in-view: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ENC(kXLCvWUqP4zjIdO9UdUqHoW8JWx6QhmGL8xDHjTonZ8=)
+            client-secret: ENC(EL3u3ItlXuIqc67Y8J+9rDJFEHYFbDS9TmJysdQ5/kRXVCRe7iXpLsp9p663LSYRIjmMoUrhxIg=)
