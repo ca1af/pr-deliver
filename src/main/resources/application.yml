@@ -27,3 +27,11 @@ spring:
           github:
             client-id: ENC(kXLCvWUqP4zjIdO9UdUqHoW8JWx6QhmGL8xDHjTonZ8=)
             client-secret: ENC(EL3u3ItlXuIqc67Y8J+9rDJFEHYFbDS9TmJysdQ5/kRXVCRe7iXpLsp9p663LSYRIjmMoUrhxIg=)
+
+logging:
+  level:
+    org.springframework.boot.context.properties.bind: DEBUG
+
+github:
+  bot:
+    token : ENC(GMq606IESQVXqQYSWofVPCAmIRbVKm9KkaskpVEm9msrk1Dod8YO2GrfDzdpAbe7uqAHA01F6o0=)
