@@ -38,4 +38,4 @@ github:
 
 jasypt:
   encryptor:
-    password: TEST123
+    password: tst
