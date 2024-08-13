@@ -15,11 +15,21 @@ public class Member extends TimeStamp implements Persistable<Long> {
     @Id
     private Long id;
 
-    private String nickname;
+    private String login;
 
-    public Member(Long id, String nickname) {
+    private String authToken;
+
+    private boolean isValid;
+
+    public Member(Long id, String login) {
         this.id = id;
-        this.nickname = nickname;
+        this.login = login;
+        this.isValid = false;
+    }
+
+    public void addToken(String authToken){
+        this.authToken = authToken;
+        this.isValid = true;
     }
 
     @Override

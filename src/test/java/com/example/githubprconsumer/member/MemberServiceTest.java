@@ -25,32 +25,32 @@ class MemberServiceTest {
     private MemberService memberService;
 
     @Test
-    void testGetMemberByNickname() {
+    void testGetMemberByLogin() {
         // arrange
         String githubEmail = "test@example.com";
         Member member = new Member(1L, githubEmail);
-        when(memberRepository.findByNickname(githubEmail)).thenReturn(Optional.of(member));
+        when(memberRepository.findByLogin(githubEmail)).thenReturn(Optional.of(member));
 
         // act
-        Member foundMember = memberService.getMemberByNickname(githubEmail);
+        Member foundMember = memberService.getMemberByLogin(githubEmail);
 
         // assert
         assertThat(member).isEqualTo(foundMember);
-        verify(memberRepository, times(1)).findByNickname(githubEmail);
+        verify(memberRepository, times(1)).findByLogin(githubEmail);
     }
 
     @Test
     void testGetMember_ByNickname_NotFound() {
         // arrange
         String githubEmail = "test@example.com";
-        when(memberRepository.findByNickname(githubEmail)).thenReturn(Optional.empty());
+        when(memberRepository.findByLogin(githubEmail)).thenReturn(Optional.empty());
 
         // act & assert
-        assertThatThrownBy(() -> memberService.getMemberByNickname(githubEmail))
+        assertThatThrownBy(() -> memberService.getMemberByLogin(githubEmail))
                 .isInstanceOf(MemberException.MemberNotFoundException.class)
                 .hasMessage("회원을 찾을 수 없습니다. 회원 이메일 : " + githubEmail);
 
-        verify(memberRepository, times(1)).findByNickname(githubEmail);
+        verify(memberRepository, times(1)).findByLogin(githubEmail);
     }
 
     @Test
@@ -74,7 +74,7 @@ class MemberServiceTest {
         // arrange
         String githubEmail = "test@example.com";
         Member newMember = new Member(1L, githubEmail);
-        when(memberRepository.findByNickname(githubEmail)).thenReturn(Optional.empty());
+        when(memberRepository.findByLogin(githubEmail)).thenReturn(Optional.empty());
         when(memberRepository.save(any(Member.class))).thenReturn(newMember);
 
         // act

@@ -1,0 +1,41 @@
+spring:
+  # DataSource
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;MODE=MYSQL
+    username: sa
+    password:
+  # H2 Config
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    open-in-view: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: tst
+            client-secret: tst
+
+logging:
+  level:
+    org.springframework.boot.context.properties.bind: DEBUG
+
+github:
+  bot:
+    token : tst
+
+jasypt:
+  encryptor:
+    password: TEST123
