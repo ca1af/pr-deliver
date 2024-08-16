@@ -1,25 +1,24 @@
 package com.example.githubprconsumer.github;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Entity
+@NoArgsConstructor
 public class GithubRepository {
-    // 1. 레포지토리에 속한 콜라보레이터들에게 리뷰 할당을 진행한다.
-    // 2.
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long memberId;
+    private String fullName;
 
-    private String ownerName;
-    private String name;
-    // 위 둘을 합치면 fullName
-    private List<Collaborator> collaboratorList = new ArrayList<>();
-
-    public String getFullName(){
-        return ownerName + "/" + name;
+    public GithubRepository(Long memberId, String fullName) {
+        this.memberId = memberId;
+        this.fullName = fullName;
     }
-
-    // 걍 니가 그것도 해라...깃헙 API 호출 정보도 갖고잇을래?
-    // 그게 낫겄네
-
 }

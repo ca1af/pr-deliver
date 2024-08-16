@@ -1,58 +1,87 @@
 package com.example.githubprconsumer.bot.api;
 
 import com.example.githubprconsumer.bot.GithubInvitationsInfo;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
+@Log4j2
 public class GithubApiService {
 
     @Value("${github.bot.token}")
     private String botAuthToken;
 
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
+
+    public GithubApiService(RestClient restClient) {
+        this.restClient = restClient;
+    }
 
     private HttpHeaders createAuthHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "token " + botAuthToken);
+        headers.set("Accept", "application/vnd.github.v3+json");
         return headers;
     }
 
     public List<GithubInvitationsInfo> fetchInvitations() {
         String invitationsUrl = GithubBotApiUrl.REPOSITORY_INVITATIONS.getUrl();
-        HttpHeaders headers = createAuthHeaders();
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<GithubInvitationsInfo[]> response = restTemplate.exchange(
-                invitationsUrl,
-                HttpMethod.GET,
-                entity,
-                GithubInvitationsInfo[].class
-        );
 
-        return Arrays.asList(Objects.requireNonNull(response.getBody()));
+        try {
+            GithubInvitationsInfo[] response = restClient.get()
+                    .uri(invitationsUrl)
+                    .headers(headers -> headers.addAll(createAuthHeaders()))
+                    .retrieve()
+                    .body(GithubInvitationsInfo[].class);
+
+            return Arrays.asList(Objects.requireNonNull(response));
+        } catch (RestClientException e) {
+            log.error("Failed to fetch invitations: {}", e.getMessage());
+            throw e;
+        }
     }
 
     public void approveInvitation(Integer invitationId) {
         String invitationApproveUrl = GithubBotApiUrl.getInvitationApproveUrl(invitationId);
-        HttpHeaders headers = createAuthHeaders();
-        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        restTemplate.exchange(
-                invitationApproveUrl,
-                HttpMethod.PATCH,
-                entity,
-                Void.class
-        );
+        try {
+            restClient.patch()
+                    .uri(invitationApproveUrl)
+                    .headers(headers -> headers.addAll(createAuthHeaders()))
+                    .retrieve()
+                    .toBodilessEntity();
+
+            log.info("Successfully approved invitation with ID: {}", invitationId);
+        } catch (RestClientException e) {
+            log.error("Failed to approve invitation with ID {}: {}", invitationId, e.getMessage());
+            throw e;
+        }
+    }
+
+    public List<GithubCollaboratorInfo> getCollaborators(String fullName) {
+        String collaboratorsUrl = GithubBotApiUrl.getCollaboratorsUrl(fullName);
+
+        try {
+            GithubCollaboratorInfo[] response = restClient.get()
+                    .uri(collaboratorsUrl)
+                    .headers(headers -> headers.addAll(createAuthHeaders()))
+                    .retrieve()
+                    .body(GithubCollaboratorInfo[].class);
+
+            List<GithubCollaboratorInfo> collaboratorInfos = Arrays.asList(Objects.requireNonNull(response));
+            log.info("Successfully retrieved collaborators: {}", collaboratorInfos);
+            return collaboratorInfos;
+        } catch (RestClientException e) {
+            log.error("Failed to fetch collaborators for {}: {}", fullName, e.getMessage());
+            throw e;
+        }
     }
 }
