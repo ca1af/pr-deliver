@@ -4,6 +4,7 @@ import com.example.githubprconsumer.bot.api.GithubApiService;
 import com.example.githubprconsumer.bot.api.GithubCollaboratorInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,5 +26,23 @@ public class CollaboratorService {
                 .toList();
 
         collaboratorJpaRepository.saveAll(collaboratorEntities);
+    }
+
+    public Integer getCollaboratorCount(Long repositoryId){
+        return collaboratorJpaRepository.countByRepositoryId(repositoryId);
+    }
+
+    public List<Collaborator> getCollaborators(Long repositoryId, String prAuthorLogin){
+        List<Collaborator> collaborators = collaboratorJpaRepository.findByRepositoryId(repositoryId);
+        if (collaborators.isEmpty()) {
+            throw new CollaboratorException.CollaboratorNotFoundException(repositoryId);
+        }
+
+        Collaborator prAuthor = collaborators.stream().filter(each -> StringUtils.equals(prAuthorLogin, each.getLogin())).findFirst().orElseThrow(
+                () -> new CollaboratorException.CollaboratorNotFoundException(prAuthorLogin)
+        );
+
+        collaborators.remove(prAuthor);
+        return collaborators;
     }
 }
