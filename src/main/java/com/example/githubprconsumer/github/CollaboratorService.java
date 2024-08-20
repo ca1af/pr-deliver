@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -42,7 +43,9 @@ public class CollaboratorService {
                 () -> new CollaboratorException.CollaboratorNotFoundException(prAuthorLogin)
         );
 
-        collaborators.remove(prAuthor);
-        return collaborators;
+        List<Collaborator> modifiableCollaborators = new ArrayList<>(collaborators);
+        modifiableCollaborators.remove(prAuthor);
+
+        return modifiableCollaborators;
     }
 }
