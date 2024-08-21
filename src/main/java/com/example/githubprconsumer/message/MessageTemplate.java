@@ -23,20 +23,30 @@ public class MessageTemplate {
     private String template;
 
     @Column(nullable = false)
-    private String githubRepositoryId;
+    private Long messengerId;
 
-    public MessageTemplate(String template, String githubRepositoryId) {
+    public MessageTemplate(String template, Long messengerId) {
         validate(template);
         this.template = template;
-        this.githubRepositoryId = githubRepositoryId;
+        this.messengerId = messengerId;
     }
 
-    private void validate(String template) {
+    public MessageTemplate(Long messengerId){
+        this.template = TemplateExample.PR_TEMPLATE.getMessage();
+        this.messengerId = messengerId;
+    }
+
+    public void validate(String template) {
         Arrays.stream(TemplatePlaceholder.values())
                 .filter(placeholder -> !template.contains(placeholder.getPlaceholder()))
                 .findFirst()
                 .ifPresent(placeholder -> {
                     throw new MessageTemplateException.MissingPlaceholderTemplateException(placeholder.name());
                 });
+    }
+
+    public void updateMessage(String template) {
+        validate(template);
+        this.template = template;
     }
 }
