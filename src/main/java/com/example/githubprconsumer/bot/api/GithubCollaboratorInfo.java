@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.bot.api;
 
-import com.example.githubprconsumer.github.Collaborator;
+import com.example.githubprconsumer.collaborator.Collaborator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

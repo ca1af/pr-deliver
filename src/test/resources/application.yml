@@ -35,6 +35,7 @@ logging:
 github:
   bot:
     token : tst
+    username : calafs-review-bot
 
 jasypt:
   encryptor:

@@ -1,16 +1,18 @@
 package com.example.githubprconsumer.message;
 
+import java.util.List;
+
 public record GithubPRResponse(
         String prTitle,
         String prLink,
         String prAuthor
 ) {
-    public DefaultMessage toDefaultMessage(String reviewAssignee) {
+    public DefaultMessage toDefaultMessage(List<String> reviewAssignees) {
         return new DefaultMessage(
                 prTitle,
                 prLink,
                 prAuthor,
-                reviewAssignee
+                String.join(", ", reviewAssignees)
         );
     }
 }

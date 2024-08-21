@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.github;
+package com.example.githubprconsumer.collaborator;
 
 import com.example.githubprconsumer.bot.api.GithubApiService;
 import com.example.githubprconsumer.bot.api.GithubCollaboratorInfo;

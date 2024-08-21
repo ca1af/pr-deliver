@@ -19,6 +19,9 @@ public class GithubApiService {
     @Value("${github.bot.token}")
     private String botAuthToken;
 
+    @Value("${github.bot.username}")
+    private String botUsername;
+
     private final RestClient restClient;
 
     public GithubApiService(RestClient restClient) {
@@ -84,4 +87,22 @@ public class GithubApiService {
             throw e;
         }
     }
+
+    public void removeSelfFromRepository(String fullName) {
+        String removeCollaboratorUrl = String.format("https://api.github.com/repos/%s/collaborators/%s", fullName, botUsername);
+
+        try {
+            restClient.delete()
+                    .uri(removeCollaboratorUrl)
+                    .headers(headers -> headers.addAll(createAuthHeaders()))
+                    .retrieve()
+                    .toBodilessEntity();
+
+            log.info("Successfully removed user '{}' from repository: {}", botUsername, fullName);
+        } catch (RestClientException e) {
+            log.error("Failed to remove user '{}' from repository: {}. Error: {}", botUsername, fullName, e.getMessage());
+            throw e;
+        }
+    }
+
 }

@@ -24,6 +24,10 @@ public class MessageService {
         messageTemplate.updateMessage(template);
     }
 
+    public void deleteMessage(Long messengerId){
+        messageTemplateRepository.deleteAllByMessengerId(messengerId);
+    }
+
     public MessageTemplate save(Long messengerId){
         MessageTemplate messageTemplate = new MessageTemplate(messengerId);
         return messageTemplateRepository.save(messageTemplate);

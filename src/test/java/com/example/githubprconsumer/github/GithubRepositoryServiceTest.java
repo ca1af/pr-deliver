@@ -1,5 +1,7 @@
 package com.example.githubprconsumer.github;
 
+import com.example.githubprconsumer.collaborator.CollaboratorService;
+import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,7 +34,7 @@ class GithubRepositoryServiceTest {
     void addGithubRepository_ShouldSaveIfRepositoryDoesNotExist() {
         // Given
         String fullName = "example/repository";
-        GithubRepositoryAddRequestDto requestDto = new GithubRepositoryAddRequestDto(1L, fullName);
+        GithubRepositoryAddRequestDto requestDto = new GithubRepositoryAddRequestDto("1L", fullName);
 
         when(jpaRepository.existsByFullName(fullName)).thenReturn(false);
         when(jpaRepository.save(any(GithubRepository.class))).thenReturn(mock(GithubRepository.class));

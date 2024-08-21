@@ -8,4 +8,6 @@ public interface MessageTemplateRepository extends JpaRepository<MessageTemplate
 
     Optional<MessageTemplate> findByMessengerId(Long messengerId);
 
+    void deleteAllByMessengerId(Long messengerId);
+
 }

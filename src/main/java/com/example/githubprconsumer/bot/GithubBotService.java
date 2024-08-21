@@ -2,8 +2,9 @@ package com.example.githubprconsumer.bot;
 
 import com.example.githubprconsumer.bot.api.GithubApiService;
 import com.example.githubprconsumer.bot.event.InvalidPermissionEvent;
-import com.example.githubprconsumer.github.GithubRepositoryAddRequestDto;
+import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.GithubRepositoryService;
+import com.example.githubprconsumer.github.event.BotRemoveEvent;
 import com.example.githubprconsumer.member.Member;
 import com.example.githubprconsumer.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 
@@ -61,6 +64,11 @@ public class GithubBotService {
 
         // 2. 만약 등록된 사용자라면 레포지토리를 등록한다. 등록자는 inviter 이름으로 한다.
         githubApiService.approveInvitation(invitation.id());
-        githubRepositoryService.addGithubRepository(new GithubRepositoryAddRequestDto(member.getId(), invitation.githubRepositoryInfo().fullName()));
+        githubRepositoryService.addGithubRepository(new GithubRepositoryAddRequestDto(member.getLogin(), invitation.githubRepositoryInfo().fullName()));
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void removeSelfFromRepository(BotRemoveEvent botRemoveEvent){
+        githubApiService.removeSelfFromRepository(botRemoveEvent.fullName());
     }
 }
