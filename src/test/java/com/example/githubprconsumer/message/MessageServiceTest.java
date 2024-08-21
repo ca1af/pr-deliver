@@ -1,39 +1,102 @@
 package com.example.githubprconsumer.message;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class MessageServiceTest {
 
-    @MockBean
+    @Mock
     private MessageTemplateRepository messageTemplateRepository;
 
-    @Autowired
+    @InjectMocks
     private MessageService messageService;
 
+    private GithubPRResponse githubPRResponse;
+
+    @BeforeEach
+    void setUp() {
+        githubPRResponse = new GithubPRResponse("prTitle", "prLink", "prAuthor");
+    }
+
     @Test
-    void testGetDefaultMessage() {
-        // arrange
-        String githubRepositoryId = "githubRepositoryId";
-        String assignee = "assignee";
-        String template = "{author} {title} {assignee} {link}";
-        GithubPRResponse githubPRResponse = new GithubPRResponse("prTitle", "prLink", "prAuthor");
-        MessageTemplate messageTemplate = new MessageTemplate(template, githubRepositoryId);
-        when(messageTemplateRepository.findByGithubRepositoryId(githubRepositoryId)).thenReturn(Optional.of(messageTemplate));
+    void testGetMessage_NoCollaborators() {
+        // Given
+        Long messengerId = 1L;
 
-        // act
-        String defaultMessage = messageService.getDefaultMessage(githubRepositoryId, githubPRResponse, assignee);
+        // When
+        String message = messageService.getMessage(messengerId, githubPRResponse, List.of());
 
-        // assert
+        // Then
+        assertThat(message).isEqualTo("PR 할당자가 없어요. 깃허브 Collaborator 를 추가 한 후 다시 시도 해 주세요");
+    }
+
+    @Test
+    void testGetMessage_WithCollaboratorsAndExistingTemplate() {
+        // Given
+        Long messengerId = 1L;
+        List<String> assigneeLogins = List.of("assignee1", "assignee2");
+        MessageTemplate existingTemplate = new MessageTemplate("{author} {title} {assignee} {link}", messengerId);
+
+        when(messageTemplateRepository.findByMessengerId(messengerId)).thenReturn(Optional.of(existingTemplate));
+
+        // When
+        String message = messageService.getMessage(messengerId, githubPRResponse, assigneeLogins);
+
+        // Then
+        assertThat(message).isEqualTo("prAuthor prTitle assignee1, assignee2 prLink");
+        verify(messageTemplateRepository, never()).save(any(MessageTemplate.class));
+    }
+
+    @Test
+    void testGetMessage_WithCollaboratorsAndNewTemplate() {
+        // Given
+        Long messengerId = 1L;
+        List<String> assigneeLogins = List.of("assignee1", "assignee2");
+
+        when(messageTemplateRepository.findByMessengerId(messengerId)).thenReturn(Optional.empty());
+        when(messageTemplateRepository.save(any(MessageTemplate.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        String message = messageService.getMessage(messengerId, githubPRResponse, assigneeLogins);
+
+        // Then
+        // Default Template 가 출력된다.
+        assertThat(message).isEqualTo("""
+            안녕하세요 여러분!\s
+            prAuthor님이 새로운 PR을 제출했어요: prTitle.\s
+            리뷰는 assignee1, assignee2님께 할당되었습니다.\s
+            여기서 확인할 수 있어요: [PR 링크](prLink)\s
+            꼼꼼하게 리뷰하고 피드백 부탁드려요. 감사합니다!
+            """);
+        verify(messageTemplateRepository, times(1)).save(any(MessageTemplate.class));
+    }
+
+    @Test
+    void testGetMessage_WithCustomTemplate() {
+        // Given
+        Long messengerId = 1L;
+        List<String> assigneeLogins = List.of("assignee");
+        MessageTemplate customTemplate = new MessageTemplate("{author} {title} {assignee} {link}", messengerId);
+
+        when(messageTemplateRepository.findByMessengerId(messengerId)).thenReturn(Optional.of(customTemplate));
+
+        // When
+        String actualMessage = messageService.getMessage(messengerId, githubPRResponse, assigneeLogins);
+
+        // Then
         String expected = "prAuthor prTitle assignee prLink";
-        assertThat(defaultMessage).isEqualTo(expected);
+        assertThat(actualMessage).isEqualTo(expected);
     }
 }

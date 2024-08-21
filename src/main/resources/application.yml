@@ -35,3 +35,4 @@ logging:
 github:
   bot:
     token : ENC(GMq606IESQVXqQYSWofVPCAmIRbVKm9KkaskpVEm9msrk1Dod8YO2GrfDzdpAbe7uqAHA01F6o0=)
+    username : calafs-review-bot

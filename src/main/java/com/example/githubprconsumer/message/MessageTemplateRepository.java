@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface MessageTemplateRepository extends JpaRepository<MessageTemplate, Long> {
 
-    Optional<MessageTemplate> findByGithubRepositoryId(String memberId);
+    Optional<MessageTemplate> findByMessengerId(Long messengerId);
+
+    void deleteAllByMessengerId(Long messengerId);
 
 }
