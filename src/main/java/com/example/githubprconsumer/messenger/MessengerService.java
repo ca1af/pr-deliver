@@ -17,6 +17,7 @@ public class MessengerService {
 
     private final MessengerJpaRepository messengerJpaRepository;
 
+    // TODO : 여기서 List<MessengerService(이름은 생각해보자)> 를 주입받고, 디스코드 뿐만 아니라 모든 메신저 서비스를 사용할 수 있도록 변경한다.
     private final DiscordMessageService discordMessageService;
 
     public void addNewMessenger(MessengerAddRequestDto messengerAddRequestDto){
