@@ -1,88 +1,83 @@
 package com.example.githubprconsumer.member;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@Transactional
 class MemberServiceTest {
 
-    @MockBean
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
     private MemberService memberService;
 
     @Test
+    @DisplayName("로그인으로 회원을 조회할 때, 존재하는 회원을 정상적으로 찾는다.")
     void testGetMemberByLogin() {
-        // arrange
+        // Given
         String githubEmail = "test@example.com";
-        Member member = new Member(1L, githubEmail);
-        when(memberRepository.findByLogin(githubEmail)).thenReturn(Optional.of(member));
+        Member member = new Member(999999L, githubEmail);
+        memberRepository.save(member);
 
-        // act
+        // When
         Member foundMember = memberService.getMemberByLogin(githubEmail);
 
-        // assert
+        // Then
         assertThat(member).isEqualTo(foundMember);
-        verify(memberRepository, times(1)).findByLogin(githubEmail);
     }
 
     @Test
-    void testGetMember_ByNickname_NotFound() {
-        // arrange
-        String githubEmail = "test@example.com";
-        when(memberRepository.findByLogin(githubEmail)).thenReturn(Optional.empty());
+    @DisplayName("로그인으로 회원을 조회할 때, 존재하지 않는 회원이면 예외가 발생한다.")
+    void testGetMember_ByLogin_NotFound() {
+        // Given
+        String githubEmail = "nonexistent@example.com";
 
-        // act & assert
+        // When & Then
         assertThatThrownBy(() -> memberService.getMemberByLogin(githubEmail))
                 .isInstanceOf(MemberException.MemberNotFoundException.class)
                 .hasMessage("회원을 찾을 수 없습니다. 회원 이메일 : " + githubEmail);
-
-        verify(memberRepository, times(1)).findByLogin(githubEmail);
     }
 
     @Test
+    @DisplayName("회원이 존재하면, 새로운 회원을 생성하지 않고 기존 회원을 반환한다.")
     void testCreateIfNotExist_MemberExists() {
-        // arrange
-        String nickname = "test@example.com";
-        Member existingMember = new Member(1L, nickname);
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(existingMember));
+        // Given
+        String githubEmail = "test@example.com";
+        Member existingMember = new Member(999999L, githubEmail);
+        memberRepository.save(existingMember);
 
-        // act
-        Member result = memberService.createIfNotExist(1L, nickname);
+        // When
+        Member result = memberService.createIfNotExist(999999L, githubEmail);
 
-        // assert
+        // Then
         assertThat(existingMember).isEqualTo(result);
-        verify(memberRepository, times(1)).findById(1L);
-        verify(memberRepository, never()).save(any(Member.class));
     }
 
     @Test
+    @DisplayName("회원이 존재하지 않으면, 새로운 회원을 생성한다.")
     void testCreateIfNotExist_MemberDoesNotExist() {
-        // arrange
+        // Given
         String githubEmail = "test@example.com";
-        Member newMember = new Member(1L, githubEmail);
-        when(memberRepository.findByLogin(githubEmail)).thenReturn(Optional.empty());
-        when(memberRepository.save(any(Member.class))).thenReturn(newMember);
+        Long memberId = 99999998L;
 
-        // act
-        Member result = memberService.createIfNotExist(1L, githubEmail);
+        // When
+        Member result = memberService.createIfNotExist(memberId, githubEmail);
 
-        // assert
-        assertThat(newMember).isEqualTo(result);
-        verify(memberRepository, times(1)).findById(1L);
-        verify(memberRepository, times(1)).save(any(Member.class));
+        // Then
+        assertThat(result.getId()).isEqualTo(memberId);
+        assertThat(result.getLogin()).isEqualTo(githubEmail);
+
+        Optional<Member> savedMember = memberRepository.findById(memberId);
+        assertThat(savedMember).isPresent();
     }
 }
