@@ -18,12 +18,12 @@ public class CollaboratorService {
     private final GithubApiService githubApiService;
     private final CollaboratorJpaRepository collaboratorJpaRepository;
 
-    public void addCollaborators(String fullName){
+    public void addCollaborators(Long repositoryId, String fullName){
         List<GithubCollaboratorInfo> collaborators = githubApiService.getCollaborators(fullName);
 
         // 성능 상 문제가 크지 않으므로 아래와 같이 픽스. 추후 필요시 JDBC Template(Client) 로 변경
         List<Collaborator> collaboratorEntities = collaborators.stream()
-                .map(GithubCollaboratorInfo::toEntity)
+                .map(each -> each.toEntity(repositoryId))
                 .toList();
 
         collaboratorJpaRepository.saveAll(collaboratorEntities);

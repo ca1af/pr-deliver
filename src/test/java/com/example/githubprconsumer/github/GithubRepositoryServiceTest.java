@@ -56,7 +56,7 @@ class GithubRepositoryServiceTest {
         assertThat(savedRepository.get().getOwnerLogin()).isEqualTo("test-user-login");
 
         // Collaborator가 추가되었는지 확인
-        verify(collaboratorService, times(1)).addCollaborators("repository-full-name");
+        verify(collaboratorService, times(1)).addCollaborators(savedRepository.get().getId(), "repository-full-name");
     }
 
     @Test
