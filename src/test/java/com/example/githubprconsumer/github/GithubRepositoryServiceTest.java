@@ -1,48 +1,153 @@
 package com.example.githubprconsumer.github;
 
+import com.example.githubprconsumer.collaborator.Collaborator;
+import com.example.githubprconsumer.collaborator.CollaboratorException;
 import com.example.githubprconsumer.collaborator.CollaboratorService;
 import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.githubprconsumer.github.dto.GithubRepositoryResponseDto;
+import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
+import com.example.githubprconsumer.messenger.MessengerService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@Transactional
 class GithubRepositoryServiceTest {
 
-    @Mock
+    @Autowired
     private GithubRepositoryJpaRepository jpaRepository;
 
-    @Mock
-    private CollaboratorService collaboratorService;
-
-    @InjectMocks
+    @Autowired
     private GithubRepositoryService githubRepositoryService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @MockBean
+    private CollaboratorService collaboratorService;
+
+    @MockBean
+    private MessengerService messengerService;
+
+    @Test
+    @DisplayName("새로운 Github 저장소를 추가하면 Collaborator를 추가하고 저장소를 저장한다.")
+    void testAddGithubRepository() {
+        // Given
+        GithubRepositoryAddRequestDto dto = new GithubRepositoryAddRequestDto("test-user-login", "repository-full-name");
+
+        // When
+        githubRepositoryService.addGithubRepository(dto);
+
+        // Then
+        Optional<GithubRepository> savedRepository = jpaRepository.findByFullName("repository-full-name");
+        assertThat(savedRepository).isPresent();
+        assertThat(savedRepository.get().getOwnerLogin()).isEqualTo("test-user-login");
+
+        // Collaborator가 추가되었는지 확인
+        verify(collaboratorService, times(1)).addCollaborators("repository-full-name");
     }
 
     @Test
-    void addGithubRepository_ShouldSaveIfRepositoryDoesNotExist() {
+    @DisplayName("저장된 Github 저장소를 ID로 조회하면 정상적으로 반환된다.")
+    void testGetGithubRepository() {
         // Given
-        String fullName = "example/repository";
-        GithubRepositoryAddRequestDto requestDto = new GithubRepositoryAddRequestDto("1L", fullName);
-
-        when(jpaRepository.existsByFullName(fullName)).thenReturn(false);
-        when(jpaRepository.save(any(GithubRepository.class))).thenReturn(mock(GithubRepository.class));
+        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        jpaRepository.save(repository);
 
         // When
-        githubRepositoryService.addGithubRepository(requestDto);
+        GithubRepositoryResponseDto responseDto = githubRepositoryService.getGithubRepository(repository.getId());
 
         // Then
-        verify(jpaRepository, times(1)).save(any(GithubRepository.class));
+        assertThat(responseDto.fullName()).isEqualTo("repository-full-name");
+        assertThat(responseDto.webhookUrl()).isEqualTo(repository.getWebhookUrl());
+    }
+
+    @Test
+    @DisplayName("저장된 Github 저장소를 ID로 조회할 때 존재하지 않으면 예외가 발생한다.")
+    void testGetGithubRepository_NotFound() {
+        // Given
+        Long invalidId = 999L;
+
+        // When & Then
+        assertThatThrownBy(() -> githubRepositoryService.getGithubRepository(invalidId))
+                .isInstanceOf(GithubRepositoryException.GithubRepositoryNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("Assignee 수를 업데이트할 때, 유효한 수인지 검증하고 업데이트한다.")
+    void testUpdateAssigneeCount_Valid() {
+        // Given
+        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        jpaRepository.save(repository);
+        when(collaboratorService.getCollaboratorCount(repository.getId())).thenReturn(5);
+
+        // When
+        githubRepositoryService.updateAssigneeCount(repository.getId(), 3);
+
+        // Then
+        GithubRepository updatedRepository = jpaRepository.findById(repository.getId()).orElseThrow();
+        assertThat(updatedRepository.getAssigneeCount()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("Assignee 수를 업데이트할 때, Collaborator 수보다 크면 예외가 발생한다.")
+    void testUpdateAssigneeCount_Invalid() {
+        // Given
+        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        jpaRepository.save(repository);
+        when(collaboratorService.getCollaboratorCount(repository.getId())).thenReturn(3);
+
+        // When & Then
+        assertThatThrownBy(() -> githubRepositoryService.updateAssigneeCount(repository.getId(), 4))
+                .isInstanceOf(CollaboratorException.InvalidCollaboratorCountException.class);
+    }
+
+    @Test
+    @DisplayName("Webhook을 통해 알림을 보내고, 메신저 서비스를 통해 메시지를 전송한다.")
+    void testSendWebhookNotification() {
+        // Given
+        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        jpaRepository.save(repository);
+        Collaborator collaborator = new Collaborator(repository.getId(), "collaborator-login", "avatar-url", "html-url");
+        when(collaboratorService.getCollaborators(repository.getId(), "prAuthor"))
+                .thenReturn(List.of(collaborator));
+
+        GithubPRResponse githubPRResponse = new GithubPRResponse("prTitle", "prLink", "prAuthor");
+
+        // When
+        githubRepositoryService.sendWebhookNotification(repository.getWebhookUrl(), githubPRResponse);
+
+        // Then
+        verify(messengerService, times(1)).sendMessage(eq(repository.getId()), eq(githubPRResponse), anyList());
+    }
+
+    @Test
+    @DisplayName("저장소를 삭제하면, 연관된 메신저 정보도 삭제하고 이벤트를 발행한다.")
+    void testDeleteGithubRepository() {
+        // Given
+        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        jpaRepository.save(repository);
+
+        // When
+        githubRepositoryService.deleteGithubRepository(repository.getId());
+
+        // Then
+        Optional<GithubRepository> deletedRepository = jpaRepository.findById(repository.getId());
+        assertThat(deletedRepository).isEmpty();
+
+        // 메신저 서비스의 삭제 동작이 호출되었는지 확인
+        verify(messengerService, times(1)).deleteAllByRepositoryId(repository.getId());
     }
 }

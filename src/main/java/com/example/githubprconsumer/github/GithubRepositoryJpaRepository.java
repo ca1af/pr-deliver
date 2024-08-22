@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface GithubRepositoryJpaRepository extends JpaRepository<GithubRepository, Long> {
 
-    boolean existsByFullName(String fullName);
+    Optional<GithubRepository> findByFullName(String fullName);
 
     Optional<GithubRepository> findByWebhookUrl(String webhookUrl);
 

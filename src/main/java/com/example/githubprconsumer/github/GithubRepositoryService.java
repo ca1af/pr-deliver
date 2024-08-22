@@ -27,6 +27,7 @@ public class GithubRepositoryService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    @Transactional
     public void addGithubRepository(GithubRepositoryAddRequestDto githubRepositoryAddRequestDto){
         GithubRepository githubRepository = githubRepositoryAddRequestDto.toEntity();
         collaboratorService.addCollaborators(githubRepository.getFullName());
