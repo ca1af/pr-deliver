@@ -1,5 +1,7 @@
 package com.example.githubprconsumer.message;
 
+import com.example.githubprconsumer.message.domain.Message;
+import com.example.githubprconsumer.message.domain.MessageTemplateException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

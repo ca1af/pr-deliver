@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.message;
+package com.example.githubprconsumer.message.application.dto;
 
 import jakarta.validation.constraints.Pattern;
 

@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.message;
+package com.example.githubprconsumer.message.domain;
 
 import com.example.githubprconsumer.global.BadRequestException;
 import com.example.githubprconsumer.global.NotFoundException;

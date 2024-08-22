@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.message;
 
+import com.example.githubprconsumer.message.application.dto.MessageUpdateRequestDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

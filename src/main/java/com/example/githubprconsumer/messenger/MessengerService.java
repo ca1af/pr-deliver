@@ -1,7 +1,7 @@
 package com.example.githubprconsumer.messenger;
 
-import com.example.githubprconsumer.message.GithubPRResponse;
-import com.example.githubprconsumer.message.MessageService;
+import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
+import com.example.githubprconsumer.message.application.MessageService;
 import com.example.githubprconsumer.messenger.discord.DiscordMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

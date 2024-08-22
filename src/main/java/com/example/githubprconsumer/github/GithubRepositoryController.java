@@ -5,7 +5,7 @@ import com.example.githubprconsumer.github.dto.GithubPayload;
 import com.example.githubprconsumer.github.dto.GithubPullRequest;
 import com.example.githubprconsumer.github.dto.GithubRepositoryResponseDto;
 import com.example.githubprconsumer.github.dto.WebhookResponse;
-import com.example.githubprconsumer.message.GithubPRResponse;
+import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

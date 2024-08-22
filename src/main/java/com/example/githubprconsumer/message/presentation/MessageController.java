@@ -1,5 +1,7 @@
-package com.example.githubprconsumer.message;
+package com.example.githubprconsumer.message.presentation;
 
+import com.example.githubprconsumer.message.application.MessageService;
+import com.example.githubprconsumer.message.application.dto.MessageUpdateRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;

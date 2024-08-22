@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.message;
+package com.example.githubprconsumer.message.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

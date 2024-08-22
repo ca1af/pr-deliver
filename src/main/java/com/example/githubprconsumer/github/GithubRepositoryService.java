@@ -6,7 +6,7 @@ import com.example.githubprconsumer.collaborator.CollaboratorService;
 import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.dto.GithubRepositoryResponseDto;
 import com.example.githubprconsumer.github.event.BotRemoveEvent;
-import com.example.githubprconsumer.message.GithubPRResponse;
+import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.messenger.MessengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

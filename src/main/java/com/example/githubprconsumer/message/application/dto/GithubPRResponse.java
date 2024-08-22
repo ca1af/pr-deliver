@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.message;
+package com.example.githubprconsumer.message.application.dto;
 
 public record GithubPRResponse(
         String prTitle,
