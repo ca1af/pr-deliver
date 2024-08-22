@@ -9,11 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @Getter
-public class MessageTemplate {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +26,13 @@ public class MessageTemplate {
     @Column(nullable = false)
     private Long messengerId;
 
-    public MessageTemplate(String template, Long messengerId) {
+    public Message(String template, Long messengerId) {
         validate(template);
         this.template = template;
         this.messengerId = messengerId;
     }
 
-    public MessageTemplate(Long messengerId){
+    public Message(Long messengerId){
         this.template = TemplateExample.PR_TEMPLATE.getMessage();
         this.messengerId = messengerId;
     }
@@ -48,5 +49,14 @@ public class MessageTemplate {
     public void updateMessage(String template) {
         validate(template);
         this.template = template;
+    }
+
+    public String mergeMessage(String prTitle, String prLink, String prAuthor, List<String> reviewAssignee) {
+        String messageText = template;
+        return messageText
+                .replace(TemplatePlaceholder.PR_TITLE.getPlaceholder(), prTitle)
+                .replace(TemplatePlaceholder.AUTHOR_NAME.getPlaceholder(), prAuthor)
+                .replace(TemplatePlaceholder.ASSIGNEE_NAME.getPlaceholder(), String.join(", ", reviewAssignee))
+                .replace(TemplatePlaceholder.PR_LINK.getPlaceholder(), prLink);
     }
 }

@@ -4,9 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface MessageTemplateRepository extends JpaRepository<MessageTemplate, Long> {
+public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    Optional<MessageTemplate> findByMessengerId(Long messengerId);
+    Optional<Message> findByMessengerId(Long messengerId);
 
     void deleteAllByMessengerId(Long messengerId);
 

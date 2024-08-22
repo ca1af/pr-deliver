@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class MessageServiceTest {
 
     @Mock
-    private MessageTemplateRepository messageTemplateRepository;
+    private MessageRepository messageRepository;
 
     @InjectMocks
     private MessageService messageService;
@@ -47,16 +47,16 @@ class MessageServiceTest {
         // Given
         Long messengerId = 1L;
         List<String> assigneeLogins = List.of("assignee1", "assignee2");
-        MessageTemplate existingTemplate = new MessageTemplate("{author} {title} {assignee} {link}", messengerId);
+        Message existingTemplate = new Message("{author} {title} {assignee} {link}", messengerId);
 
-        when(messageTemplateRepository.findByMessengerId(messengerId)).thenReturn(Optional.of(existingTemplate));
+        when(messageRepository.findByMessengerId(messengerId)).thenReturn(Optional.of(existingTemplate));
 
         // When
         String message = messageService.getMessage(messengerId, githubPRResponse, assigneeLogins);
 
         // Then
         assertThat(message).isEqualTo("prAuthor prTitle assignee1, assignee2 prLink");
-        verify(messageTemplateRepository, never()).save(any(MessageTemplate.class));
+        verify(messageRepository, never()).save(any(Message.class));
     }
 
     @Test
@@ -65,8 +65,8 @@ class MessageServiceTest {
         Long messengerId = 1L;
         List<String> assigneeLogins = List.of("assignee1", "assignee2");
 
-        when(messageTemplateRepository.findByMessengerId(messengerId)).thenReturn(Optional.empty());
-        when(messageTemplateRepository.save(any(MessageTemplate.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(messageRepository.findByMessengerId(messengerId)).thenReturn(Optional.empty());
+        when(messageRepository.save(any(Message.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
         String message = messageService.getMessage(messengerId, githubPRResponse, assigneeLogins);
@@ -80,7 +80,7 @@ class MessageServiceTest {
             여기서 확인할 수 있어요: [PR 링크](prLink)\s
             꼼꼼하게 리뷰하고 피드백 부탁드려요. 감사합니다!
             """);
-        verify(messageTemplateRepository, times(1)).save(any(MessageTemplate.class));
+        verify(messageRepository, times(1)).save(any(Message.class));
     }
 
     @Test
@@ -88,9 +88,9 @@ class MessageServiceTest {
         // Given
         Long messengerId = 1L;
         List<String> assigneeLogins = List.of("assignee");
-        MessageTemplate customTemplate = new MessageTemplate("{author} {title} {assignee} {link}", messengerId);
+        Message customTemplate = new Message("{author} {title} {assignee} {link}", messengerId);
 
-        when(messageTemplateRepository.findByMessengerId(messengerId)).thenReturn(Optional.of(customTemplate));
+        when(messageRepository.findByMessengerId(messengerId)).thenReturn(Optional.of(customTemplate));
 
         // When
         String actualMessage = messageService.getMessage(messengerId, githubPRResponse, assigneeLogins);
