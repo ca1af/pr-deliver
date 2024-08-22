@@ -15,23 +15,13 @@ class MemberTest {
 
     @BeforeEach
     void setUp() {
-        member = new Member(1L, "testNickname");
+        member = new Member("testNickname");
     }
 
     @Test
     void testConstructor() {
-        assertThat(member.getId()).isEqualTo(1L);
         assertThat(member.getLogin()).isEqualTo("testNickname");
         assertThat(member.isValid()).isFalse();
-    }
-
-    @Test
-    void testAddToken() {
-        String token = "testToken";
-        member.addToken(token);
-
-        assertThat(member.getAuthToken()).isEqualTo(token);
-        assertThat(member.isValid()).isTrue();
     }
 
     @Test

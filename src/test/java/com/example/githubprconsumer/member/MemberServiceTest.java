@@ -26,7 +26,7 @@ class MemberServiceTest {
     void testGetMemberByLogin() {
         // Given
         String githubEmail = "test@example.com";
-        Member member = new Member(999999L, githubEmail);
+        Member member = new Member(githubEmail);
         memberRepository.save(member);
 
         // When
@@ -53,11 +53,11 @@ class MemberServiceTest {
     void testCreateIfNotExist_MemberExists() {
         // Given
         String githubEmail = "test@example.com";
-        Member existingMember = new Member(999999L, githubEmail);
+        Member existingMember = new Member(githubEmail);
         memberRepository.save(existingMember);
 
         // When
-        Member result = memberService.createIfNotExist(999999L, githubEmail);
+        Member result = memberService.createIfNotExist(githubEmail);
 
         // Then
         assertThat(existingMember).isEqualTo(result);
@@ -68,16 +68,14 @@ class MemberServiceTest {
     void testCreateIfNotExist_MemberDoesNotExist() {
         // Given
         String githubEmail = "test@example.com";
-        Long memberId = 99999998L;
 
         // When
-        Member result = memberService.createIfNotExist(memberId, githubEmail);
+        Member result = memberService.createIfNotExist(githubEmail);
 
         // Then
-        assertThat(result.getId()).isEqualTo(memberId);
         assertThat(result.getLogin()).isEqualTo(githubEmail);
 
-        Optional<Member> savedMember = memberRepository.findById(memberId);
+        Optional<Member> savedMember = memberRepository.findByLogin(githubEmail);
         assertThat(savedMember).isPresent();
     }
 }

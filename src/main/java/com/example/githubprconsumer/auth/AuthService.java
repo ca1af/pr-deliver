@@ -12,6 +12,6 @@ public class AuthService {
     private final MemberService memberService;
 
     public void saveIfNotPresent(LoginRequestDto loginRequestDto) {
-        memberService.createIfNotExist(loginRequestDto.memberId(), loginRequestDto.nickname());
+        memberService.createIfNotExist(loginRequestDto.nickname());
     }
 }

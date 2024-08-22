@@ -1,7 +1,7 @@
 package com.example.githubprconsumer.member;
 
-public record SignupRequestDto(Long id, String githubEmail) {
+public record SignupRequestDto(String login) {
     public Member toEntity(){
-        return new Member(id, githubEmail);
+        return new Member(login);
     }
 }

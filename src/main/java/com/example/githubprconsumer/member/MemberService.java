@@ -2,7 +2,6 @@ package com.example.githubprconsumer.member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,19 +21,13 @@ public class MemberService {
         );
     }
 
-    @Transactional
-    public void addAuthToken(Long memberId, String authToken){
-        Member member = getMemberById(memberId);
-        member.addToken(authToken);
-    }
-
     public boolean existsByLogin(String login){
         return memberRepository.existsByLogin(login);
     }
 
-    public Member createIfNotExist(Long memberId, String githubEmail) {
-        return memberRepository.findById(memberId)
-                .orElseGet(() -> save(new SignupRequestDto(memberId, githubEmail)));
+    public Member createIfNotExist(String login) {
+        return memberRepository.findByLogin(login)
+                .orElseGet(() -> save(new SignupRequestDto(login)));
     }
 
     private Member save(SignupRequestDto signupRequestDto) {
