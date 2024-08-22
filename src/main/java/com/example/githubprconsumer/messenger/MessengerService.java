@@ -48,7 +48,7 @@ public class MessengerService {
 
     public void deleteMessenger(Long messengerId){
         messengerJpaRepository.deleteById(messengerId);
-        messageService.deleteMessage(messengerId);
+        messageService.deleteAllMessagesByMessengerId(messengerId);
     }
 
     public void deleteAllByRepositoryId(Long repositoryId){

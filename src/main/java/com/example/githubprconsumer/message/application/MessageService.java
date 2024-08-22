@@ -27,7 +27,7 @@ public class MessageService {
         message.updateMessage(template);
     }
 
-    public void deleteMessage(Long messengerId){
+    public void deleteAllMessagesByMessengerId(Long messengerId){
         messageRepository.deleteAllByMessengerId(messengerId);
     }
 

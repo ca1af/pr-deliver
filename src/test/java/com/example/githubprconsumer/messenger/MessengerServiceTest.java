@@ -118,7 +118,7 @@ class MessengerServiceTest {
 
         // Then
         assertThat(messengerJpaRepository.findById(savedMessenger.getId())).isEmpty();
-        verify(messageService, times(1)).deleteMessage(savedMessenger.getId());
+        verify(messageService, times(1)).deleteAllMessagesByMessengerId(savedMessenger.getId());
     }
 
     @Test
@@ -138,6 +138,6 @@ class MessengerServiceTest {
 
         // Then
         assertThat(messengerJpaRepository.findAllByRepositoryId(repositoryId)).isEmpty();
-        verify(messageService, times(2)).deleteMessage(anyLong());
+        verify(messageService, times(2)).deleteAllMessagesByMessengerId(anyLong());
     }
 }
