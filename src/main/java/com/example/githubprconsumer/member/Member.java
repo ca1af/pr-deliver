@@ -7,12 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Persistable;
 
 @Entity
 @NoArgsConstructor
 @Getter
-public class Member extends TimeStamp implements Persistable<Long> {
+public class Member extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,17 +19,7 @@ public class Member extends TimeStamp implements Persistable<Long> {
 
     private String login;
 
-    private String authToken;
-
-    private boolean isValid;
-
     public Member(String login) {
         this.login = login;
-        this.isValid = false;
-    }
-
-    @Override
-    public boolean isNew() {
-        return this.getCreatedAt() == null;
     }
 }
