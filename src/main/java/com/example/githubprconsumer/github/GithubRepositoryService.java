@@ -30,8 +30,8 @@ public class GithubRepositoryService {
     @Transactional
     public void addGithubRepository(GithubRepositoryAddRequestDto githubRepositoryAddRequestDto){
         GithubRepository githubRepository = githubRepositoryAddRequestDto.toEntity();
-        collaboratorService.addCollaborators(githubRepository.getId(), githubRepository.getFullName());
         jpaRepository.save(githubRepository);
+        collaboratorService.addCollaborators(githubRepository.getId(), githubRepository.getFullName());
     }
 
     public GithubRepositoryResponseDto getGithubRepository(Long repositoryId){
