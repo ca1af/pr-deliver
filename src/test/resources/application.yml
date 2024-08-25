@@ -40,3 +40,6 @@ github:
 jasypt:
   encryptor:
     password: lol123ok!
+
+jwt :
+  secret : lol123ok!lol123ok!lol123ok!lol123ok!lol123ok!lol123ok!lol123ok!lol123ok!
