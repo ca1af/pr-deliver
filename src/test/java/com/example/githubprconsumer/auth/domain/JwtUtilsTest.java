@@ -9,13 +9,13 @@ class JwtUtilsTest {
     @Test
     void replaceBearerPrefix_ShouldRemoveBearerPrefix() {
         // Given
-        String bearerToken = "Bearer abcdefghijklmnopqrstuvwxyz";
+        String bearerToken = "Bearer validtoken";
 
         // When
         String token = JwtUtils.replaceBearerPrefix(bearerToken);
 
         // Then
-        assertThat(token).isEqualTo("abcdefghijklmnopqrstuvwxyz");
+        assertThat(token).isEqualTo("validtoken");
     }
 
     @Test
