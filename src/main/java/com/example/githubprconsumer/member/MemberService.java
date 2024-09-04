@@ -9,9 +9,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public Member getMemberByLogin(String nickname) {
-        return memberRepository.findByLogin(nickname).orElseThrow(
-                () -> new MemberException.MemberNotFoundException(nickname)
+    public Member getMemberByLogin(String login) {
+        return memberRepository.findByLogin(login).orElseThrow(
+                () -> new MemberException.MemberNotFoundException(login)
         );
     }
 
@@ -33,5 +33,12 @@ public class MemberService {
     private Member save(SignupRequestDto signupRequestDto) {
         Member member = signupRequestDto.toEntity();
         return memberRepository.save(member);
+    }
+
+    /// 이 아래는 read
+
+    public MemberResponseDto getMemberResponseDto(String login) {
+        Member member = getMemberByLogin(login);
+        return new MemberResponseDto(member.getId(), member.getLogin());
     }
 }
