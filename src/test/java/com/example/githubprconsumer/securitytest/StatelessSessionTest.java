@@ -39,4 +39,14 @@ class StatelessSessionTest {
         HttpSession session = mvcResult.getRequest().getSession(false);
         assertThat(session).isNull(); // Stateless 설정에서는 세션이 null이어야 함
     }
+
+    @Test
+    void testWebMvcTestUsesMockSessions() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/oauth2/login"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        HttpSession session = mvcResult.getRequest().getSession(false);
+        assertThat(session).isNull(); // 아무 설정이 없다면 세션을 생성하지 않는다.
+    }
 }
