@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.securitytest;
 
-import com.example.githubprconsumer.auth.CustomOauth2User;
+import com.example.githubprconsumer.auth.domain.CustomOauth2User;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -25,7 +25,6 @@ public class WithMockOAuth2UserSecurityContextFactory implements WithSecurityCon
         );
 
         context.setAuthentication(new OAuth2AuthenticationToken(principal, principal.getAuthorities(), "github"));
-
 
         return context;
     }

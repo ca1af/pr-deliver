@@ -1,8 +1,7 @@
 package com.example.githubprconsumer.securitytest;
 
-import com.example.githubprconsumer.auth.AuthController;
-import com.example.githubprconsumer.auth.AuthService;
 import com.example.githubprconsumer.auth.JwtAuthenticationFilter;
+import com.example.githubprconsumer.auth.presentation.AuthController;
 import com.example.githubprconsumer.securitytest.config.StatelessSecurityConfig;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;
@@ -25,9 +24,6 @@ class StatelessSessionTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private AuthService authService;
 
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;

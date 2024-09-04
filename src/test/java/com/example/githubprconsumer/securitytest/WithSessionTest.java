@@ -1,8 +1,7 @@
 package com.example.githubprconsumer.securitytest;
 
-import com.example.githubprconsumer.auth.AuthController;
-import com.example.githubprconsumer.auth.AuthService;
 import com.example.githubprconsumer.auth.JwtAuthenticationFilter;
+import com.example.githubprconsumer.auth.presentation.AuthController;
 import com.example.githubprconsumer.securitytest.config.IfRequiredSecurityConfig;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;
@@ -25,12 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("세션 상태가 IF_REQUIRED 일 때를 테스트한다.")
 class WithSessionTest {
 
-
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private AuthService authService;
 
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -52,5 +47,4 @@ class WithSessionTest {
         OAuth2User principal = (OAuth2User) securityContext.getAuthentication().getPrincipal();
         assertThat(principal.getName()).isEqualTo("99999");
     }
-
 }
