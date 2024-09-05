@@ -1,6 +1,9 @@
 package com.example.githubprconsumer.auth.application;
 
 import com.example.githubprconsumer.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.member.Member;
+import com.example.githubprconsumer.member.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -9,7 +12,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class OAuth2UserDetailService extends DefaultOAuth2UserService {
+
+    private final MemberService memberService;
 
     @Override
     public CustomOauth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -22,6 +28,8 @@ public class OAuth2UserDetailService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Login 어트리뷰트가 존재하지 않습니다.");
         }
 
-        return new CustomOauth2User(login);
+        Member member = memberService.createIfNotExist(login);
+
+        return new CustomOauth2User(member.getLogin());
     }
 }
