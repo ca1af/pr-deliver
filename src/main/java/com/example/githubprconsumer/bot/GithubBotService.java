@@ -51,7 +51,6 @@ public class GithubBotService {
     }
 
     public void approveInvitations(GithubInvitationsInfo invitation) {
-        log.info("레포지토리 초대를 수락합니다. 레포지토리 풀네임 : {}", invitation.githubRepositoryInfo().fullName());
         String inviterLogin = invitation.inviterInfo().login();
 
         // 가입되지 않은 사용자일 경우
@@ -59,6 +58,8 @@ public class GithubBotService {
             eventPublisher.publishEvent(new InvalidPermissionEvent(invitation.id(), invitation.inviterInfo().login()));
             return;
         }
+
+        log.info("레포지토리 초대를 수락합니다. 레포지토리 풀네임 : {}", invitation.githubRepositoryInfo().fullName());
 
         Member member = memberService.getMemberByLogin(inviterLogin);
 
