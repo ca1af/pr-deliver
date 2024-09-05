@@ -1,7 +1,6 @@
 package com.example.githubprconsumer.message.domain;
 
 import com.example.githubprconsumer.global.BadRequestException;
-import com.example.githubprconsumer.global.NotFoundException;
 
 public class MessageTemplateException extends RuntimeException {
 
@@ -15,15 +14,6 @@ public class MessageTemplateException extends RuntimeException {
 
         public MissingPlaceholderTemplateException(String message) {
             super(DEFAULT_MESSAGE + message);
-        }
-    }
-
-    public static class MessageTemplateNotFoundException extends NotFoundException {
-
-        private static final String MESSAGE_TEMPLATE_NOT_FOUND = "메시지 템플릿을 찾을 수 없습니다. 레포 ID : ";
-
-        public MessageTemplateNotFoundException(Long repositoryId) {
-            super(MESSAGE_TEMPLATE_NOT_FOUND + repositoryId);
         }
     }
 }
