@@ -57,8 +57,6 @@ public class JwtProvider {
 
 
     public String getLoginFromToken(String token) {
-        token = JwtUtils.replaceBearerPrefix(token);
-
         try {
             Jws<Claims> parsedClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             String login = parsedClaims.getBody().getSubject();
