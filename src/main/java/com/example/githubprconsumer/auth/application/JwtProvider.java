@@ -56,9 +56,11 @@ public class JwtProvider {
     }
 
 
-    public String getLoginFromToken(String token) {
+    public String getLoginFromToken(String bearerToken) {
+        bearerToken = JwtUtils.replaceBearerPrefix(bearerToken);
+
         try {
-            Jws<Claims> parsedClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jws<Claims> parsedClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(bearerToken);
             String login = parsedClaims.getBody().getSubject();
 
             if (Objects.isNull(login)){
@@ -75,7 +77,7 @@ public class JwtProvider {
         String bearerToken = request.getHeader("Authorization");
 
         if (bearerToken != null && JwtUtils.isValidBearerToken(bearerToken)) {
-            return JwtUtils.replaceBearerPrefix(bearerToken); // "Bearer " 제거 및 공백 제거
+            return bearerToken;
         }
 
         return null;

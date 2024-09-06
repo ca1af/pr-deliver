@@ -101,7 +101,7 @@ class JwtProviderTest {
         String token = jwtProvider.resolveToken(request);
 
         // then
-        assertThat(token).isEqualTo("testToken");
+        assertThat(token).isEqualTo("Bearer testToken");
     }
 
     @Test
