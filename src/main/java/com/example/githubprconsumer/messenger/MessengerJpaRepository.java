@@ -13,4 +13,5 @@ public interface MessengerJpaRepository extends JpaRepository<Messenger, Long> {
 
     void deleteAllByRepositoryId(Long repositoryId);
 
+    Optional<Messenger> findByWebhookUrl(String webhookUrl);
 }

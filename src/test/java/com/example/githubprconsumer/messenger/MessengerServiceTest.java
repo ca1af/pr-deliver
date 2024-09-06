@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.messenger;
 
+import com.example.githubprconsumer.global.EncryptService;
 import com.example.githubprconsumer.message.application.MessageService;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.messenger.discord.DiscordMessageService;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
@@ -32,11 +34,32 @@ class MessengerServiceTest {
     @Autowired
     private MessengerService messengerService;
 
+    @Autowired
+    private EncryptService encryptService;
+
     @MockBean
     private MessageService messageService;
 
     @MockBean
     private DiscordMessageService discordMessageService;
+
+    @Test
+    @DisplayName("새로운 메신저를 성공적으로 추가하고 메시지를 전송한다.")
+    void testAddNewMessenger_Success() {
+        // Given
+        Long repositoryId = 1L;
+        MessengerType messengerType = MessengerType.DISCORD;
+        String webhookUrl = "https://discord.com/api/webhooks/...";
+        String encryptedWebhookUrl = encryptService.encrypt(webhookUrl);
+
+        MessengerAddRequestDto requestDto = new MessengerAddRequestDto(repositoryId, messengerType, webhookUrl);
+
+        // When
+        messengerService.addNewMessenger(requestDto);
+
+        // Then
+        verify(discordMessageService, times(1)).sendMessage(eq(webhookUrl), contains(encryptedWebhookUrl)); // 메시지가 전송되는지 확인
+    }
 
     @Test
     @DisplayName("같은 레포지토리에 중복된 메신저 (EX : Discord 가 이미 존재하는데 Discord 추가) 를 추가하면 예외가 발생한다.")
@@ -53,6 +76,38 @@ class MessengerServiceTest {
         // When & Then
         assertThatThrownBy(() -> messengerService.addNewMessenger(requestDto))
                 .isInstanceOf(MessengerException.DuplicatedMessengerException.class);
+    }
+
+    @Test
+    @DisplayName("메신저를 활성화하는 데 성공한다.")
+    void testActivateMessenger_Success() {
+        // Given
+        Long repositoryId = 1L;
+        MessengerType messengerType = MessengerType.DISCORD;
+        String webhookUrl = "https://discord.com/api/webhooks/...";
+        String encryptedWebhookUrl = encryptService.encrypt(webhookUrl);
+
+        Messenger messenger = new Messenger(repositoryId, messengerType, encryptedWebhookUrl);
+        messengerJpaRepository.save(messenger);
+
+        // When
+        messengerService.activateMessenger(encryptedWebhookUrl);
+
+        // Then
+        Messenger activatedMessenger = messengerJpaRepository.findByWebhookUrl(encryptedWebhookUrl)
+                .orElseThrow(() -> new MessengerException.MessengerNotFoundException(encryptedWebhookUrl));
+        assertThat(activatedMessenger.isActive()).isTrue();
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 메신저를 활성화하려 하면 예외가 발생한다.")
+    void testActivateMessenger_MessengerNotFound() {
+        // Given
+        String invalidWebhookUrl = "invalid_webhook_url";
+
+        // When & Then
+        assertThatThrownBy(() -> messengerService.activateMessenger(invalidWebhookUrl))
+                .isInstanceOf(MessengerException.MessengerNotFoundException.class);
     }
 
     @Test
@@ -82,7 +137,8 @@ class MessengerServiceTest {
         Long repositoryId = 1L;
         MessengerType messengerType = MessengerType.DISCORD;
         String webhookUrl = "https://discord.com/api/webhooks/...";
-        Messenger messenger = new Messenger(repositoryId, messengerType, webhookUrl);
+        String encryptedWebhookUrl = encryptService.encrypt(webhookUrl);
+        Messenger messenger = new Messenger(repositoryId, messengerType, encryptedWebhookUrl);
         messengerJpaRepository.save(messenger); // 메신저를 하나 저장한다.
 
         GithubPRResponse githubPRResponse = new GithubPRResponse(
@@ -90,6 +146,7 @@ class MessengerServiceTest {
                 "https://github.com/example/repo/pull/1",
                 "octocat"
         );
+
         List<String> assigneeLogins = Collections.singletonList("assignee1");
 
         String expectedMessage = "Test Message";
@@ -100,7 +157,7 @@ class MessengerServiceTest {
         messengerService.sendMessage(repositoryId, githubPRResponse, assigneeLogins);
 
         // Then
-        verify(discordMessageService, times(1)).sendMessage(webhookUrl, expectedMessage);
+        verify(discordMessageService, times(1)).sendMessage(webhookUrl, expectedMessage); // 메시지 전송 호출 검증
     }
 
     @Test

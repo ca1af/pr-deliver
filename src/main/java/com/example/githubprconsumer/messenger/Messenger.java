@@ -28,9 +28,17 @@ public class Messenger {
     @Column(nullable = false)
     private String webhookUrl;
 
+    @Column(nullable = false)
+    private boolean isActive;
+
     public Messenger(Long repositoryId, MessengerType messengerType, String webhookUrl) {
         this.repositoryId = repositoryId;
         this.messengerType = messengerType;
         this.webhookUrl = webhookUrl;
+        this.isActive = false;
+    }
+
+    public void activate(){
+        this.isActive = true;
     }
 }
