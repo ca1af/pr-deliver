@@ -39,3 +39,7 @@ github:
 
 jwt :
   secret : ENC(bNUMLg/f/WhYAclC/S73b5so4MHF8gSA26o5MhWS5LkM2RiM0932q68gjgmbbNXyid8qY30BXOc5Tb8zY4TpiIeBd+CB/Be2oOxRAKu9LfizpxqSId5k8CwR0DdwS4GR)
+
+encrypt:
+  key: ENC(3ta1LwTz9dnxRSrgRdiySXxcg8AqZZHcE4ipbi9+nVjYc70YUMe93h6OQ8E5YdcQqpIVp9VpVWKCXrjEHQensbb1Sljx9SrT)
+  salt: ENC(vGlVN8XIx1jQGwFcI9l1vT5vgY3mkrRIVxtFPD0kApA5XREF/+cYe0MB+FPR3Iz1)
