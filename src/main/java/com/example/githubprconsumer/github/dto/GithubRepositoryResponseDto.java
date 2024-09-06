@@ -6,14 +6,16 @@ public record GithubRepositoryResponseDto(
         Long repositoryId,
         String fullName,
         String ownerLogin,
-        String webhookUrl
+        String webhookUrl,
+        boolean isActiveWebhook
 ) {
     public static GithubRepositoryResponseDto of(GithubRepository repository){
         return new GithubRepositoryResponseDto(
                 repository.getId(),
                 repository.getFullName(),
                 repository.getOwnerLogin(),
-                repository.getWebhookUrl()
+                repository.getWebhookUrl(),
+                repository.isActiveWebhook()
         );
     }
 }

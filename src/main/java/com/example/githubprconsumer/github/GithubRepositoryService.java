@@ -5,6 +5,7 @@ import com.example.githubprconsumer.collaborator.CollaboratorException;
 import com.example.githubprconsumer.collaborator.CollaboratorService;
 import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.dto.GithubRepositoryResponseDto;
+import com.example.githubprconsumer.github.dto.RepositoryInfo;
 import com.example.githubprconsumer.github.event.BotRemoveEvent;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.messenger.MessengerService;
@@ -32,6 +33,15 @@ public class GithubRepositoryService {
         GithubRepository githubRepository = githubRepositoryAddRequestDto.toEntity();
         jpaRepository.save(githubRepository);
         collaboratorService.addCollaborators(githubRepository.getId(), githubRepository.getFullName());
+    }
+
+    @Transactional
+    public void activateWebhook(RepositoryInfo repositoryInfo){
+        GithubRepository githubRepository = jpaRepository.findByFullName(repositoryInfo.fullName()).orElseThrow(
+                () -> new GithubRepositoryException.UnsupportedRepositoryException(repositoryInfo.fullName())
+        );
+
+        githubRepository.activateWebhook();
     }
 
     public GithubRepositoryResponseDto getGithubRepository(Long repositoryId){
@@ -71,10 +81,9 @@ public class GithubRepositoryService {
     @Transactional
     public void deleteGithubRepository(Long repositoryId){
         messengerService.deleteAllByRepositoryId(repositoryId);
-        GithubRepository githubRepository = jpaRepository.findById(repositoryId)
-                .orElseThrow(
-                        () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
-                );
+        GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
+                () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
+        );
         String fullName = githubRepository.getFullName();
         jpaRepository.delete(githubRepository);
         applicationEventPublisher.publishEvent(new BotRemoveEvent(fullName));

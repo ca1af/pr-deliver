@@ -9,6 +9,7 @@ class GithubRepositoryTest {
     void createTest() {
         GithubRepository githubRepository = new GithubRepository("Login", "FOO");
         Assertions.assertThat(githubRepository).isNotNull();
+        Assertions.assertThat(githubRepository.isActiveWebhook()).isFalse();
         Assertions.assertThat(githubRepository.getAssigneeCount()).isOne();
     }
 
@@ -16,5 +17,12 @@ class GithubRepositoryTest {
     void webhookUrlTest() {
         GithubRepository githubRepository = new GithubRepository("Login", "FOO");
         Assertions.assertThat(githubRepository.getWebhookUrl()).hasSize(8);
+    }
+
+    @Test
+    void activateTest() {
+        GithubRepository githubRepository = new GithubRepository("Login", "FOO");
+        githubRepository.activateWebhook();
+        Assertions.assertThat(githubRepository.isActiveWebhook()).isTrue();
     }
 }

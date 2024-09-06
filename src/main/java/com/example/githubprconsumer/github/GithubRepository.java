@@ -21,12 +21,19 @@ public class GithubRepository {
     private String fullName;
     private String webhookUrl;
     private Integer assigneeCount;
+    @Column(nullable = false)
+    private boolean isActiveWebhook;
 
     public GithubRepository(String ownerLogin, String fullName) {
         this.ownerLogin = ownerLogin;
         this.fullName = fullName;
         this.webhookUrl = RandomStringGenerator.getRandomString(fullName);
         this.assigneeCount = 1;
+        this.isActiveWebhook = false;
+    }
+
+    public void activateWebhook(){
+        this.isActiveWebhook = true;
     }
 
     public void updateAssigneeCount(int count) {

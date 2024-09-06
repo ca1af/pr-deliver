@@ -1,13 +1,16 @@
 package com.example.githubprconsumer.github;
 
 import com.example.githubprconsumer.github.dto.AssigneeUpdateRequestDto;
-import com.example.githubprconsumer.github.dto.GithubPayload;
+import com.example.githubprconsumer.github.dto.PingPayload;
+import com.example.githubprconsumer.github.dto.PullRequestPayload;
 import com.example.githubprconsumer.github.dto.GithubPullRequest;
 import com.example.githubprconsumer.github.dto.GithubRepositoryResponseDto;
+import com.example.githubprconsumer.github.dto.RepositoryInfo;
 import com.example.githubprconsumer.github.dto.WebhookResponse;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,11 +29,27 @@ public class GithubRepositoryController {
     private final ObjectMapper mapper;
 
     @PostMapping("/{hookUrl}")
-    public void createWebhookMessage(@PathVariable String hookUrl, @RequestBody WebhookResponse webhookResponse) throws JsonProcessingException {
-        GithubPayload githubPayload = mapper.readValue(webhookResponse.payload(), GithubPayload.class);
-        GithubPullRequest githubPullRequest = githubPayload.githubPullRequest();
-        GithubPRResponse githubPRResponse = new GithubPRResponse(githubPullRequest.title(), githubPullRequest.htmlUrl(), githubPullRequest.user().login());
-        githubRepositoryService.sendWebhookNotification(hookUrl, githubPRResponse);
+    @Operation(description = "PR, Ping 등 웹훅 이벤트가 발생되었을 때 호출되는 API (프론트측에서 사용하지 않는 API)")
+    public void createWebhookMessage(@RequestHeader("X-GitHub-Event") String eventType,
+                                     @PathVariable String hookUrl,
+                                     @RequestBody WebhookResponse webhookResponse) throws JsonProcessingException {
+
+        if ("ping".equals(eventType)) {
+            // 핑이 왔다면 해당 레포지토리의 웹훅이 잘 등록 된 것이다.
+            PingPayload pingPayload = mapper.readValue(webhookResponse.payload(), PingPayload.class);
+            RepositoryInfo repositoryInfo = pingPayload.repository();
+            githubRepositoryService.activateWebhook(repositoryInfo);
+        }
+
+        if ("pull_request".equals(eventType)) {
+            // Pull Request 이벤트 처리
+            PullRequestPayload pullRequestPayload = mapper.readValue(webhookResponse.payload(), PullRequestPayload.class);
+            GithubPullRequest githubPullRequest = pullRequestPayload.githubPullRequest();
+            GithubPRResponse githubPRResponse = new GithubPRResponse(githubPullRequest.title(), githubPullRequest.htmlUrl(), githubPullRequest.user().login());
+            githubRepositoryService.sendWebhookNotification(hookUrl, githubPRResponse);
+        }
+
+        // 여기서 예외처리를 해야한다.
     }
 
     @GetMapping("/repositories/{repositoryId}/webhooks")
