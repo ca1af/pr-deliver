@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.github;
 
+import com.example.githubprconsumer.global.NotAuthorizedException;
 import com.example.githubprconsumer.global.NotFoundException;
 import com.example.githubprconsumer.global.SystemException;
 
@@ -25,6 +26,15 @@ public class GithubRepositoryException extends RuntimeException{
 
         public UnsupportedRepositoryException(String fullName) {
             super(INVALID_REPOSITORY + fullName);
+        }
+    }
+
+    public static class NotMyGithubRepositoryException extends NotAuthorizedException {
+
+        private static final String NOT_MY_REPOSITORY = "사용자가 소유한 레포지토리가 아닙니다. login: %s, repoFullName: %s";
+
+        public NotMyGithubRepositoryException(String login, String repoFullName) {
+            super(String.format(NOT_MY_REPOSITORY, login, repoFullName));
         }
     }
 }

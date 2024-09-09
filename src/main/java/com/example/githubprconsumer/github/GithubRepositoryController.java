@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.github;
 
+import com.example.githubprconsumer.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.github.dto.AssigneeUpdateRequestDto;
 import com.example.githubprconsumer.github.dto.PingPayload;
 import com.example.githubprconsumer.github.dto.PullRequestPayload;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,12 +55,14 @@ public class GithubRepositoryController {
     }
 
     @GetMapping("/repositories/{repositoryId}/webhooks")
+    @Operation(description = "레포지토리의 정보를 리턴하는 GET API")
     public GithubRepositoryResponseDto getRepositoryInfo(@PathVariable Long repositoryId){
         return githubRepositoryService.getGithubRepository(repositoryId);
     }
 
     // TODO : 인증 방식이 결정되면, 인증 유저만 수정/삭제 하도록 한다.
     @PutMapping("/repositories/{repositoryId}/counts")
+    @Operation(description = "레포지토리에서 발생한 PR의 리뷰어 수를 변경하는 API. 콜라보레이터가 4명(자신포함) 이라면 최대 3명까지 가능하다.")
     public void updateAssigneeCount(@PathVariable Long repositoryId,
                                     @RequestBody AssigneeUpdateRequestDto assigneeUpdateRequestDto){
         githubRepositoryService.updateAssigneeCount(repositoryId, assigneeUpdateRequestDto.count());
@@ -66,7 +70,8 @@ public class GithubRepositoryController {
 
     // TODO : 인증 방식이 결정되면, 인증 유저만 수정/삭제 하도록 한다.
     @DeleteMapping("/repositories/{repositoryId}")
-    public void deleteGithubRepository(@PathVariable Long repositoryId){
-        githubRepositoryService.deleteGithubRepository(repositoryId);
+    @Operation(description = "내가 가입한 레포지토리에서 나온다")
+    public void deleteGithubRepository(@PathVariable Long repositoryId, @AuthenticationPrincipal CustomOauth2User customOauth2User){
+        githubRepositoryService.deleteGithubRepository(repositoryId, customOauth2User.login());
     }
 }

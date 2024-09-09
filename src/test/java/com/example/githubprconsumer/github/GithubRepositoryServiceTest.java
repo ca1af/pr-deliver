@@ -137,11 +137,12 @@ class GithubRepositoryServiceTest {
     @DisplayName("저장소를 삭제하면, 연관된 메신저 정보도 삭제하고 이벤트를 발행한다.")
     void testDeleteGithubRepository() {
         // Given
-        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        String ownerLogin = "owner-login";
+        GithubRepository repository = new GithubRepository(ownerLogin, "repository-full-name");
         jpaRepository.save(repository);
 
         // When
-        githubRepositoryService.deleteGithubRepository(repository.getId());
+        githubRepositoryService.deleteGithubRepository(repository.getId(), ownerLogin);
 
         // Then
         Optional<GithubRepository> deletedRepository = jpaRepository.findById(repository.getId());
@@ -149,5 +150,18 @@ class GithubRepositoryServiceTest {
 
         // 메신저 서비스의 삭제 동작이 호출되었는지 확인
         verify(messengerService, times(1)).deleteAllByRepositoryId(repository.getId());
+    }
+
+    @Test
+    @DisplayName("저장소 삭제 시 권한이 없다면 예외가 발생한다.")
+    void throwsUnExceptionWhenNotAuthorized() {
+        // Given
+        String ownerLogin = "owner-login";
+        GithubRepository repository = new GithubRepository(ownerLogin, "repository-full-name");
+        jpaRepository.save(repository);
+
+        // When
+        assertThatThrownBy(() -> githubRepositoryService.deleteGithubRepository(repository.getId(), "notAuthorized"))
+                .isInstanceOf(GithubRepositoryException.NotMyGithubRepositoryException.class);
     }
 }

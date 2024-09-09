@@ -79,12 +79,16 @@ public class GithubRepositoryService {
     }
 
     @Transactional
-    public void deleteGithubRepository(Long repositoryId){
+    public void deleteGithubRepository(Long repositoryId, String login){
         messengerService.deleteAllByRepositoryId(repositoryId);
         GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
                 () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
         );
         String fullName = githubRepository.getFullName();
+        if (!githubRepository.getOwnerLogin().equals(login)){
+            throw new GithubRepositoryException.NotMyGithubRepositoryException(login, fullName);
+        }
+
         jpaRepository.delete(githubRepository);
         applicationEventPublisher.publishEvent(new BotRemoveEvent(fullName));
     }
