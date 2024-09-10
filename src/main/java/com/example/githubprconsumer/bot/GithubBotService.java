@@ -1,16 +1,13 @@
 package com.example.githubprconsumer.bot;
 
 import com.example.githubprconsumer.bot.api.GithubApiService;
-import com.example.githubprconsumer.bot.event.InvalidPermissionEvent;
-import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.GithubRepositoryService;
+import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.event.BotRemoveEvent;
 import com.example.githubprconsumer.member.Member;
 import com.example.githubprconsumer.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -26,38 +23,30 @@ public class GithubBotService {
 
     private final MemberService memberService;
 
-    private final ApplicationEventPublisher eventPublisher;
-
     private final GithubRepositoryService githubRepositoryService;
 
-    @Scheduled(fixedRate = 3000)
-    public void checkAndApproveInvitations() {
+    public void checkAndApproveInvitations(String fullName) {
         List<GithubInvitationsInfo> invitations = githubApiService.fetchInvitations();
 
-        if (invitations.isEmpty()) {
-            return;
-        }
+        GithubInvitationsInfo githubInvitationsInfo = invitations.stream().filter(each -> each.githubRepositoryInfo().fullName().equals(fullName))
+                .findAny()
+                .orElseThrow(
+                        () -> new GithubBotException.NotInvitedException(fullName)
+                );
+        InviterInfo inviterInfo = githubInvitationsInfo.inviterInfo();
 
-        invitations.forEach(this::approveIfValid);
+        validateInvitation(inviterInfo.login(), githubInvitationsInfo.permissions());
+        approveInvitation(githubInvitationsInfo);
     }
 
-    private void approveIfValid(GithubInvitationsInfo invitation) {
-        if (!invitation.permissions().contains("write")) {
-            eventPublisher.publishEvent(new InvalidPermissionEvent(invitation.id(), invitation.inviterInfo().login()));
-            return;
+    private void validateInvitation(String inviterLogin, String permissions){
+        if (!permissions.contains("write")) {
+            throw new GithubBotException.BadAuthorityGrantedException(inviterLogin);
         }
-
-        approveInvitations(invitation);
     }
 
-    public void approveInvitations(GithubInvitationsInfo invitation) {
+    public void approveInvitation(GithubInvitationsInfo invitation) {
         String inviterLogin = invitation.inviterInfo().login();
-
-        // 가입되지 않은 사용자일 경우
-        if (!memberService.existsByLogin(inviterLogin)){
-            eventPublisher.publishEvent(new InvalidPermissionEvent(invitation.id(), invitation.inviterInfo().login()));
-            return;
-        }
 
         log.info("레포지토리 초대를 수락합니다. 레포지토리 풀네임 : {}", invitation.githubRepositoryInfo().fullName());
 

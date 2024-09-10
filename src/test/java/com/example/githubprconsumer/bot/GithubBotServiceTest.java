@@ -1,28 +1,23 @@
 package com.example.githubprconsumer.bot;
 
 import com.example.githubprconsumer.bot.api.GithubApiService;
-import com.example.githubprconsumer.bot.event.InvalidPermissionEvent;
 import com.example.githubprconsumer.github.GithubRepositoryService;
 import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.event.BotRemoveEvent;
 import com.example.githubprconsumer.member.Member;
 import com.example.githubprconsumer.member.MemberService;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,7 +25,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
-@RecordApplicationEvents
 class GithubBotServiceTest {
 
     @Autowired
@@ -39,18 +33,17 @@ class GithubBotServiceTest {
     @MockBean
     private GithubApiService githubApiService;
 
-    @MockBean
+    @Autowired
     private MemberService memberService;
 
     @MockBean
     private GithubRepositoryService githubRepositoryService;
 
-    @Autowired
-    private ApplicationEvents applicationEvents;
-
     private GithubInvitationsInfo validInvitation;
+
     private String login;
 
+    private Member validMember;
 
     @BeforeEach
     void setUp() {
@@ -58,44 +51,30 @@ class GithubBotServiceTest {
         GithubRepositoryInfo githubRepositoryInfo = new GithubRepositoryInfo(1L, "full/name");
         InviterInfo inviterInfo = new InviterInfo(1L, login);
         validInvitation = new GithubInvitationsInfo(1, githubRepositoryInfo, "write", inviterInfo);
+        validMember = memberService.createIfNotExist(login);
     }
 
     @Test
-    @DisplayName("유효하지 않은 권한의 초대가 있을 경우 이벤트를 발행한다.")
-    void checkAndApproveInvitations_ShouldPublishEventForInvalidInvitations() {
+    @DisplayName("깃허브 봇을 Collaborator 로 초대를 하지 않은 상태로 요청하면 예외가 발생한다.")
+    void whenNotInvitedBot_thenThrowException() {
         // Given
-        GithubInvitationsInfo invalidInvitation = new GithubInvitationsInfo(2, new GithubRepositoryInfo(2L, "invalid/repo"), "read", new InviterInfo(2L, "inviter-login"));
+        GithubInvitationsInfo invalidInvitation = new GithubInvitationsInfo(2, new GithubRepositoryInfo(2L, "invalid/repo"), "read", new InviterInfo(2L, login));
+
+        // Then
+        assertThatThrownBy(() -> githubBotService.checkAndApproveInvitations(invalidInvitation.githubRepositoryInfo().fullName()))
+                .isInstanceOf(GithubBotException.NotInvitedException.class);
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 권한의 초대가 있을 경우 예외를 발생시킨다..")
+    void checkAndApproveInvitations_ShouldPublishEventForInvalidInvitation() {
+        // Given
+        GithubInvitationsInfo invalidInvitation = new GithubInvitationsInfo(2, new GithubRepositoryInfo(2L, "invalid/repo"), "read", new InviterInfo(2L, login));
         when(githubApiService.fetchInvitations()).thenReturn(List.of(invalidInvitation));
 
-        // When
-        githubBotService.checkAndApproveInvitations();
-        InvalidPermissionEvent event = applicationEvents.stream(InvalidPermissionEvent.class).findFirst().orElse(null);
-
         // Then
-        SoftAssertions.assertSoftly(softly -> {
-            assertThat(event).isNotNull();
-            softly.assertThat(event.id()).isEqualTo(invalidInvitation.id());
-            softly.assertThat(event.login()).isEqualTo("inviter-login");
-        });
-    }
-
-    @Test
-    @DisplayName("등록되지 않은 사용자로부터 초대를 받을 경우 이벤트를 발행한다.")
-    void approveInvitations_ShouldPublishEventWhenMemberNotExists() {
-        // Given
-        when(memberService.existsByLogin(login)).thenReturn(false);
-
-        // When
-        githubBotService.approveInvitations(validInvitation);
-        InvalidPermissionEvent event = applicationEvents.stream(InvalidPermissionEvent.class).findFirst().orElse(null);
-
-        // Then
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(event).isNotNull();
-            assert event != null;
-            softly.assertThat(event.id()).isEqualTo(validInvitation.id());
-            softly.assertThat(event.login()).isEqualTo(login);
-        });
+        assertThatThrownBy(() -> githubBotService.checkAndApproveInvitations(invalidInvitation.githubRepositoryInfo().fullName()))
+                .isInstanceOf(GithubBotException.BadAuthorityGrantedException.class);
     }
 
     @Test
@@ -105,7 +84,8 @@ class GithubBotServiceTest {
         when(githubApiService.fetchInvitations()).thenReturn(List.of());
 
         // when
-        githubBotService.checkAndApproveInvitations();
+        assertThatThrownBy(() -> githubBotService.checkAndApproveInvitations(validInvitation.githubRepositoryInfo().fullName()))
+                .isInstanceOf(GithubBotException.NotInvitedException.class);
 
         // then
         verify(githubApiService, never()).approveInvitation(any());
@@ -113,29 +93,23 @@ class GithubBotServiceTest {
 
     @Test
     @DisplayName("유효한 초대가 있을 경우 초대를 승인한다.")
-    void checkAndApproveInvitations_ShouldApproveValidInvitations() {
+    void checkAndApproveInvitations_ShouldApproveValidInvitation() {
         // Given
-        when(memberService.existsByLogin(login)).thenReturn(true);
         when(githubApiService.fetchInvitations()).thenReturn(List.of(validInvitation));
-        when(memberService.getMemberByLogin(login)).thenReturn(mock(Member.class));
 
         // When
-        githubBotService.checkAndApproveInvitations();
+        githubBotService.checkAndApproveInvitations(validInvitation.githubRepositoryInfo().fullName());
 
         // Then
         verify(githubApiService, times(1)).approveInvitation(validInvitation.id());
+        verify(githubRepositoryService, times(1)).addGithubRepository(any(GithubRepositoryAddRequestDto.class));
     }
 
     @Test
     @DisplayName("유효한 사용자로부터 초대를 받을 경우 레포지토리를 등록한다.")
-    void approveInvitations_ShouldRegisterRepositoryWhenMemberExists() {
-        // Given
-        Member member = new Member(login);
-        when(memberService.existsByLogin(login)).thenReturn(true);
-        when(memberService.getMemberByLogin(login)).thenReturn(member);
-
+    void approveInvitation_ShouldRegisterRepositoryWhenMemberExists() {
         // When
-        githubBotService.approveInvitations(validInvitation);
+        githubBotService.approveInvitation(validInvitation);
 
         // Then
         verify(githubApiService, times(1)).approveInvitation(validInvitation.id());

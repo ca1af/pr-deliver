@@ -1,17 +1,20 @@
 package com.example.githubprconsumer.github;
 
 import com.example.githubprconsumer.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.bot.GithubBotService;
 import com.example.githubprconsumer.github.dto.AssigneeUpdateRequestDto;
-import com.example.githubprconsumer.github.dto.PingPayload;
-import com.example.githubprconsumer.github.dto.PullRequestPayload;
 import com.example.githubprconsumer.github.dto.GithubPullRequest;
 import com.example.githubprconsumer.github.dto.GithubRepositoryResponseDto;
+import com.example.githubprconsumer.github.dto.PingPayload;
+import com.example.githubprconsumer.github.dto.PullRequestPayload;
 import com.example.githubprconsumer.github.dto.RepositoryInfo;
 import com.example.githubprconsumer.github.dto.WebhookResponse;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,14 +24,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class GithubRepositoryController {
 
     private final GithubRepositoryService githubRepositoryService;
     private final ObjectMapper mapper;
+    private final GithubBotService githubBotService;
+
+
+    @PostMapping("/repositories")
+    @Operation(description = "사용자가 레포지토리에 bot 계정을 추가 한 후 이 API 를 호출하면, 우리 서비스에 레포지토리의 정보가 등록된다.")
+    public void registerRepository(@RequestParam @Parameter(description = "레포지토리의 풀네임 ex : ca1af/review-provider") String fullName){
+        githubBotService.checkAndApproveInvitations(fullName);
+    }
 
     @PostMapping("/{hookUrl}")
     @Operation(description = "PR, Ping 등 웹훅 이벤트가 발생되었을 때 호출되는 API (프론트측에서 사용하지 않는 API)")
