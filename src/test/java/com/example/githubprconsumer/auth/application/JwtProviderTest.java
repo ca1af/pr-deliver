@@ -3,9 +3,7 @@ package com.example.githubprconsumer.auth.application;
 import com.example.githubprconsumer.auth.domain.AuthenticationException;
 import com.example.githubprconsumer.auth.domain.JwtUtils;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -109,7 +107,6 @@ class JwtProviderTest {
     void isValidToken() {
         // given
         String token = jwtProvider.createToken(TEST_USER_LOGIN);
-        token = JwtUtils.replaceBearerPrefix(token);
 
         // when
         boolean isValid = jwtProvider.isValidToken(token);
@@ -131,7 +128,7 @@ class JwtProviderTest {
 
         // when & then
         assertThatThrownBy(() -> jwtProvider.isValidToken(expiredToken))
-                .isInstanceOf(ExpiredJwtException.class);
+                .isInstanceOf(AuthenticationException.InvalidJwtTokenException.class);
     }
 
     @Test
@@ -142,6 +139,6 @@ class JwtProviderTest {
 
         // when & then
         assertThatThrownBy(() -> jwtProvider.isValidToken(invalidToken))
-                .isInstanceOf(MalformedJwtException.class);
+                .isInstanceOf(AuthenticationException.InvalidJwtTokenException.class);
     }
 }
