@@ -1,6 +1,7 @@
 package com.example.githubprconsumer.auth;
 
 import com.example.githubprconsumer.auth.application.OAuth2UserDetailService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer")
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -25,7 +27,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                                .requestMatchers("/oauth2/login", "/oauth2/success").permitAll()
+                                .requestMatchers("/oauth2/login", "/oauth2/success", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/{path}").permitAll()
                                 .anyRequest().authenticated()
                 )

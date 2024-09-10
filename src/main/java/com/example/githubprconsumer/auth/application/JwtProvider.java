@@ -1,6 +1,7 @@
 package com.example.githubprconsumer.auth.application;
 
 import com.example.githubprconsumer.auth.domain.AuthenticationException;
+import com.example.githubprconsumer.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.auth.domain.JwtUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -39,7 +40,8 @@ public class JwtProvider {
 
     public Authentication getAuthentication(String token) {
         String login = getLoginFromToken(token);
-        return new UsernamePasswordAuthenticationToken(login, null, null);
+        CustomOauth2User principal = new CustomOauth2User(login);
+        return new UsernamePasswordAuthenticationToken(principal, null, null);
     }
 
     public String createToken(String login) {
@@ -84,6 +86,7 @@ public class JwtProvider {
     }
 
     public boolean isValidToken(String token) {
+        token = JwtUtils.replaceBearerPrefix(token);
         Jws<Claims> claimsJws = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

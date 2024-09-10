@@ -35,6 +35,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .build().toUriString();
 
         log.info(redirectUrl);
+        // TODO : 여기서 리다이렉트를 프론트쪽으로 바꿔준다.
 
         response.sendRedirect(redirectUrl);
     }
