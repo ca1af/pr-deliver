@@ -3,7 +3,7 @@ package com.example.githubprconsumer.message.application;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.message.domain.Message;
 import com.example.githubprconsumer.message.domain.MessageRepository;
-import com.example.githubprconsumer.messenger.MessengerException;
+import com.example.githubprconsumer.messenger.domain.MessengerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

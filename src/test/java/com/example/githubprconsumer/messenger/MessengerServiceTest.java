@@ -1,9 +1,15 @@
 package com.example.githubprconsumer.messenger;
 
-import com.example.githubprconsumer.global.EncryptService;
+import com.example.githubprconsumer.global.application.EncryptService;
 import com.example.githubprconsumer.message.application.MessageService;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
-import com.example.githubprconsumer.messenger.discord.DiscordMessageService;
+import com.example.githubprconsumer.messenger.application.MessengerAddRequestDto;
+import com.example.githubprconsumer.messenger.application.MessengerService;
+import com.example.githubprconsumer.messenger.application.DiscordMessageService;
+import com.example.githubprconsumer.messenger.domain.Messenger;
+import com.example.githubprconsumer.messenger.domain.MessengerException;
+import com.example.githubprconsumer.messenger.domain.MessengerJpaRepository;
+import com.example.githubprconsumer.messenger.domain.MessengerType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

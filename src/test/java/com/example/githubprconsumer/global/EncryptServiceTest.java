@@ -1,5 +1,7 @@
 package com.example.githubprconsumer.global;
 
+import com.example.githubprconsumer.global.application.EncryptService;
+import com.example.githubprconsumer.global.exception.SystemException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

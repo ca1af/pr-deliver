@@ -1,5 +1,7 @@
 package com.example.githubprconsumer.messenger;
 
+import com.example.githubprconsumer.messenger.domain.Messenger;
+import com.example.githubprconsumer.messenger.domain.MessengerType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

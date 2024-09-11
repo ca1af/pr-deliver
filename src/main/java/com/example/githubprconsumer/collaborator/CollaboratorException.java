@@ -1,7 +1,7 @@
 package com.example.githubprconsumer.collaborator;
 
-import com.example.githubprconsumer.global.BadRequestException;
-import com.example.githubprconsumer.global.NotFoundException;
+import com.example.githubprconsumer.global.exception.BadRequestException;
+import com.example.githubprconsumer.global.exception.NotFoundException;
 
 public class CollaboratorException extends RuntimeException {
 

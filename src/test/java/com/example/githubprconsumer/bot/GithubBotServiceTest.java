@@ -1,11 +1,16 @@
 package com.example.githubprconsumer.bot;
 
-import com.example.githubprconsumer.bot.api.GithubApiService;
-import com.example.githubprconsumer.github.GithubRepositoryService;
-import com.example.githubprconsumer.github.dto.GithubRepositoryAddRequestDto;
-import com.example.githubprconsumer.github.event.BotRemoveEvent;
-import com.example.githubprconsumer.member.Member;
-import com.example.githubprconsumer.member.MemberService;
+import com.example.githubprconsumer.github.domain.GithubBotException;
+import com.example.githubprconsumer.github.application.GithubBotService;
+import com.example.githubprconsumer.github.application.dto.GithubInvitationsInfo;
+import com.example.githubprconsumer.github.application.dto.GithubRepositoryInfo;
+import com.example.githubprconsumer.github.application.dto.InviterInfo;
+import com.example.githubprconsumer.github.application.GithubApiService;
+import com.example.githubprconsumer.github.application.GithubRepositoryService;
+import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
+import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
+import com.example.githubprconsumer.member.domain.Member;
+import com.example.githubprconsumer.member.application.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

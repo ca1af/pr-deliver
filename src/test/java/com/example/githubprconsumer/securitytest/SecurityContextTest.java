@@ -1,7 +1,7 @@
 package com.example.githubprconsumer.securitytest;
 
-import com.example.githubprconsumer.member.Member;
-import com.example.githubprconsumer.member.MemberRepository;
+import com.example.githubprconsumer.member.domain.Member;
+import com.example.githubprconsumer.member.domain.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

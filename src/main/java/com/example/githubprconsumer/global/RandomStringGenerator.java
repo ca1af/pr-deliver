@@ -1,5 +1,7 @@
 package com.example.githubprconsumer.global;
 
+import com.example.githubprconsumer.global.exception.NotFoundException;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

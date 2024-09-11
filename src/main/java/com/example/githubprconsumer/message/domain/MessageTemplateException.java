@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.message.domain;
 
-import com.example.githubprconsumer.global.BadRequestException;
+import com.example.githubprconsumer.global.exception.BadRequestException;
 
 public class MessageTemplateException extends RuntimeException {
 

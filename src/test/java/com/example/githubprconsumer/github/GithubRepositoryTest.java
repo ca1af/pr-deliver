@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.github;
 
+import com.example.githubprconsumer.github.domain.GithubRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

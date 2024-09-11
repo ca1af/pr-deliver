@@ -1,5 +1,9 @@
 package com.example.githubprconsumer.member;
 
+import com.example.githubprconsumer.member.application.MemberService;
+import com.example.githubprconsumer.member.domain.Member;
+import com.example.githubprconsumer.member.domain.MemberException;
+import com.example.githubprconsumer.member.domain.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

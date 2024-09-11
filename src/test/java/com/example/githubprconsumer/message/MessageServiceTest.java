@@ -4,7 +4,7 @@ import com.example.githubprconsumer.message.application.MessageService;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.message.domain.Message;
 import com.example.githubprconsumer.message.domain.MessageRepository;
-import com.example.githubprconsumer.messenger.MessengerException;
+import com.example.githubprconsumer.messenger.domain.MessengerException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

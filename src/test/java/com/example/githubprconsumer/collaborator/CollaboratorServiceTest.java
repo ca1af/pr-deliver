@@ -1,7 +1,7 @@
 package com.example.githubprconsumer.collaborator;
 
-import com.example.githubprconsumer.bot.api.GithubApiService;
-import com.example.githubprconsumer.bot.api.GithubCollaboratorInfo;
+import com.example.githubprconsumer.github.application.GithubApiService;
+import com.example.githubprconsumer.github.application.dto.GithubCollaboratorInfo;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
