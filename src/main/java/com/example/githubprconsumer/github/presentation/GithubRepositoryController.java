@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
+@Log4j2
 public class GithubRepositoryController {
 
     private final GithubRepositoryService githubRepositoryService;
@@ -49,6 +51,7 @@ public class GithubRepositoryController {
     public void createWebhookMessage(@RequestHeader("X-GitHub-Event") String eventType,
                                      @PathVariable String hookUrl,
                                      @RequestBody WebhookResponse webhookResponse) throws JsonProcessingException {
+        log.info("웹훅 activated, Response : {}", webhookResponse);
 
         if ("ping".equals(eventType)) {
             // 핑이 왔다면 해당 레포지토리의 웹훅이 잘 등록 된 것이다.

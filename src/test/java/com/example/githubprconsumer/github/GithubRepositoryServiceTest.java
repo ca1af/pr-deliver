@@ -1,8 +1,8 @@
 package com.example.githubprconsumer.github;
 
-import com.example.githubprconsumer.collaborator.Collaborator;
-import com.example.githubprconsumer.collaborator.CollaboratorException;
-import com.example.githubprconsumer.collaborator.CollaboratorService;
+import com.example.githubprconsumer.github.domain.Collaborator;
+import com.example.githubprconsumer.github.domain.CollaboratorException;
+import com.example.githubprconsumer.github.application.CollaboratorService;
 import com.example.githubprconsumer.github.application.GithubRepositoryService;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;

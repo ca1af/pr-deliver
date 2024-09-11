@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.collaborator;
+package com.example.githubprconsumer.github.domain;
 
 import com.example.githubprconsumer.global.exception.BadRequestException;
 import com.example.githubprconsumer.global.exception.NotFoundException;
@@ -22,7 +22,7 @@ public class CollaboratorException extends RuntimeException {
 
     public static class InvalidCollaboratorCountException extends BadRequestException {
 
-        private static final String INVALID_COLLABORATOR_COUNT = "리뷰 할당자 수가 콜라보레이터 수보다 많습니다.";
+        private static final String INVALID_COLLABORATOR_COUNT = "콜라보레이터 수가 적절하지 않습니다.";
 
         public InvalidCollaboratorCountException() {
             super(INVALID_COLLABORATOR_COUNT);

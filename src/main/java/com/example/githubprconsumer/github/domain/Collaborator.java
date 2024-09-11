@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.collaborator;
+package com.example.githubprconsumer.github.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,7 +1,9 @@
 package com.example.githubprconsumer.messenger.presentation;
 
 import com.example.githubprconsumer.messenger.application.MessengerAddRequestDto;
+import com.example.githubprconsumer.messenger.application.MessengerResponseDto;
 import com.example.githubprconsumer.messenger.application.MessengerService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +19,9 @@ public class MessengerController {
     private final MessengerService messengerService;
 
     @PostMapping("/messengers")
-    public void addMessenger(@RequestBody MessengerAddRequestDto messengerAddRequestDto){
-        messengerService.addNewMessenger(messengerAddRequestDto);
+    @Operation(description = "레포지토리 웹훅을 수신할 새 메신저를 추가합니다.")
+    public MessengerResponseDto addMessenger(@RequestBody MessengerAddRequestDto messengerAddRequestDto){
+        return messengerService.addNewMessenger(messengerAddRequestDto);
     }
 
     @GetMapping("/{encryptedWebhookUrl}")

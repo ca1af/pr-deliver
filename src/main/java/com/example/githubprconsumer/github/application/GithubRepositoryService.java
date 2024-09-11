@@ -1,15 +1,13 @@
 package com.example.githubprconsumer.github.application;
 
-import com.example.githubprconsumer.collaborator.Collaborator;
-import com.example.githubprconsumer.collaborator.CollaboratorException;
-import com.example.githubprconsumer.collaborator.CollaboratorService;
-import com.example.githubprconsumer.github.domain.GithubRepository;
-import com.example.githubprconsumer.github.domain.GithubRepositoryException;
-import com.example.githubprconsumer.github.domain.GithubRepositoryJpaRepository;
+import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;
 import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
-import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
+import com.example.githubprconsumer.github.domain.Collaborator;
+import com.example.githubprconsumer.github.domain.GithubRepository;
+import com.example.githubprconsumer.github.domain.GithubRepositoryException;
+import com.example.githubprconsumer.github.domain.GithubRepositoryJpaRepository;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.messenger.application.MessengerService;
 import lombok.RequiredArgsConstructor;
@@ -62,11 +60,7 @@ public class GithubRepositoryService {
         );
 
         Integer collaboratorCount = collaboratorService.getCollaboratorCount(repositoryId);
-        if (assigneeCount > collaboratorCount) {
-            throw new CollaboratorException.InvalidCollaboratorCountException();
-        }
-
-        githubRepository.updateAssigneeCount(assigneeCount);
+        githubRepository.updateAssigneeCount(assigneeCount, collaboratorCount);
     }
 
     public void sendWebhookNotification(String webhookUrl, GithubPRResponse githubPRResponse){
@@ -88,7 +82,7 @@ public class GithubRepositoryService {
                 () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
         );
         String fullName = githubRepository.getFullName();
-        if (!githubRepository.getOwnerLogin().equals(login)){
+        if (!githubRepository.isMyRepo(login)){
             throw new GithubRepositoryException.NotMyGithubRepositoryException(login, fullName);
         }
 
