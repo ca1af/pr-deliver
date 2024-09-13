@@ -1,11 +1,10 @@
 package com.example.githubprconsumer.github;
 
-import com.example.githubprconsumer.github.domain.Collaborator;
-import com.example.githubprconsumer.github.domain.CollaboratorException;
 import com.example.githubprconsumer.github.application.CollaboratorService;
 import com.example.githubprconsumer.github.application.GithubRepositoryService;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
-import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;
+import com.example.githubprconsumer.github.domain.Collaborator;
+import com.example.githubprconsumer.github.domain.CollaboratorException;
 import com.example.githubprconsumer.github.domain.GithubRepository;
 import com.example.githubprconsumer.github.domain.GithubRepositoryException;
 import com.example.githubprconsumer.github.domain.GithubRepositoryJpaRepository;
@@ -63,42 +62,18 @@ class GithubRepositoryServiceTest {
         verify(collaboratorService, times(1)).addCollaborators(savedRepository.get().getId(), "repository-full-name");
     }
 
-    @Test
-    @DisplayName("저장된 Github 저장소를 ID로 조회하면 정상적으로 반환된다.")
-    void testGetGithubRepository() {
-        // Given
-        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
-        jpaRepository.save(repository);
-
-        // When
-        GithubRepositoryResponseDto responseDto = githubRepositoryService.getGithubRepository(repository.getId());
-
-        // Then
-        assertThat(responseDto.fullName()).isEqualTo("repository-full-name");
-        assertThat(responseDto.webhookUrl()).isEqualTo(repository.getWebhookUrl());
-    }
-
-    @Test
-    @DisplayName("저장된 Github 저장소를 ID로 조회할 때 존재하지 않으면 예외가 발생한다.")
-    void testGetGithubRepository_NotFound() {
-        // Given
-        Long invalidId = 999L;
-
-        // When & Then
-        assertThatThrownBy(() -> githubRepositoryService.getGithubRepository(invalidId))
-                .isInstanceOf(GithubRepositoryException.GithubRepositoryNotFoundException.class);
-    }
 
     @Test
     @DisplayName("Assignee 수를 업데이트할 때, 유효한 수인지 검증하고 업데이트한다.")
     void testUpdateAssigneeCount_Valid() {
         // Given
-        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        String ownerLogin = "owner-login";
+        GithubRepository repository = new GithubRepository(ownerLogin, "repository-full-name");
         jpaRepository.save(repository);
         when(collaboratorService.getCollaboratorCount(repository.getId())).thenReturn(5);
 
         // When
-        githubRepositoryService.updateAssigneeCount(repository.getId(), 3);
+        githubRepositoryService.updateAssigneeCount(repository.getId(), 3, ownerLogin);
 
         // Then
         GithubRepository updatedRepository = jpaRepository.findById(repository.getId()).orElseThrow();
@@ -109,12 +84,13 @@ class GithubRepositoryServiceTest {
     @DisplayName("Assignee 수를 업데이트할 때, Collaborator 수보다 크면 예외가 발생한다.")
     void testUpdateAssigneeCount_Invalid() {
         // Given
-        GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
+        String ownerLogin = "owner-login";
+        GithubRepository repository = new GithubRepository(ownerLogin, "repository-full-name");
         jpaRepository.save(repository);
         when(collaboratorService.getCollaboratorCount(repository.getId())).thenReturn(3);
 
         // When & Then
-        assertThatThrownBy(() -> githubRepositoryService.updateAssigneeCount(repository.getId(), 4))
+        assertThatThrownBy(() -> githubRepositoryService.updateAssigneeCount(repository.getId(), 4, ownerLogin))
                 .isInstanceOf(CollaboratorException.InvalidCollaboratorCountException.class);
     }
 
@@ -138,7 +114,7 @@ class GithubRepositoryServiceTest {
     }
 
     @Test
-    @DisplayName("저장소를 삭제하면, 연관된 메신저 정보도 삭제하고 이벤트를 발행한다.")
+    @DisplayName("저장소를 삭제하면, 연관된 메신저 정보도 삭제한다.")
     void testDeleteGithubRepository() {
         // Given
         String ownerLogin = "owner-login";
@@ -153,7 +129,7 @@ class GithubRepositoryServiceTest {
         assertThat(deletedRepository).isEmpty();
 
         // 메신저 서비스의 삭제 동작이 호출되었는지 확인
-        verify(messengerService, times(1)).deleteAllByRepositoryId(repository.getId());
+        verify(messengerService, times(1)).deleteAllByRepositoryId(repository.getId(), ownerLogin);
     }
 
     @Test

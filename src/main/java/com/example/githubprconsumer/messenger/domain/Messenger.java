@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @NoArgsConstructor
@@ -26,13 +27,17 @@ public class Messenger {
     private MessengerType messengerType;
 
     @Column(nullable = false)
+    private String login;
+
+    @Column(nullable = false)
     private String webhookUrl;
 
     @Column(nullable = false)
     private boolean isActive;
 
-    public Messenger(Long repositoryId, MessengerType messengerType, String webhookUrl) {
+    public Messenger(Long repositoryId, MessengerType messengerType, String webhookUrl, String login) {
         this.repositoryId = repositoryId;
+        this.login = login;
         this.messengerType = messengerType;
         this.webhookUrl = webhookUrl;
         this.isActive = false;
@@ -40,5 +45,9 @@ public class Messenger {
 
     public void activate(){
         this.isActive = true;
+    }
+
+    public boolean isMine(String login){
+        return StringUtils.equals(login, this.login);
     }
 }

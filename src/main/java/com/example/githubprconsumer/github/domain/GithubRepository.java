@@ -41,14 +41,14 @@ public class GithubRepository {
             throw new CollaboratorException.InvalidCollaboratorCountException();
         }
 
-        if (inputCount >= collaboratorCount - 1) {
+        if (inputCount > collaboratorCount - 1) {
             throw new CollaboratorException.InvalidCollaboratorCountException();
         }
 
         this.assigneeCount = inputCount;
     }
 
-    public boolean isMyRepo(String login){
-        return ownerLogin.equals(login);
+    public boolean isNotMine(String login){
+        return !ownerLogin.equals(login);
     }
 }

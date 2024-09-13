@@ -2,7 +2,6 @@ package com.example.githubprconsumer.github.application;
 
 import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
-import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;
 import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
 import com.example.githubprconsumer.github.domain.Collaborator;
 import com.example.githubprconsumer.github.domain.GithubRepository;
@@ -45,19 +44,15 @@ public class GithubRepositoryService {
         githubRepository.activateWebhook();
     }
 
-    public GithubRepositoryResponseDto getGithubRepository(Long repositoryId){
-        GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
-                () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
-        );
-
-        return GithubRepositoryResponseDto.of(githubRepository);
-    }
-
     @Transactional
-    public void updateAssigneeCount(Long repositoryId, Integer assigneeCount){
+    public void updateAssigneeCount(Long repositoryId, Integer assigneeCount, String login){
         GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
                 () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
         );
+
+        if (githubRepository.isNotMine(login)){
+            throw new GithubRepositoryException.NotMyGithubRepositoryException(login, githubRepository.getFullName());
+        }
 
         Integer collaboratorCount = collaboratorService.getCollaboratorCount(repositoryId);
         githubRepository.updateAssigneeCount(assigneeCount, collaboratorCount);
@@ -77,12 +72,12 @@ public class GithubRepositoryService {
 
     @Transactional
     public void deleteGithubRepository(Long repositoryId, String login){
-        messengerService.deleteAllByRepositoryId(repositoryId);
+        messengerService.deleteAllByRepositoryId(repositoryId, login);
         GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
                 () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
         );
         String fullName = githubRepository.getFullName();
-        if (!githubRepository.isMyRepo(login)){
+        if (githubRepository.isNotMine(login)){
             throw new GithubRepositoryException.NotMyGithubRepositoryException(login, fullName);
         }
 

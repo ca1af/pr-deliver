@@ -5,7 +5,6 @@ import com.example.githubprconsumer.github.application.GithubBotService;
 import com.example.githubprconsumer.github.application.GithubRepositoryService;
 import com.example.githubprconsumer.github.application.dto.AssigneeUpdateRequestDto;
 import com.example.githubprconsumer.github.application.dto.GithubPullRequest;
-import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;
 import com.example.githubprconsumer.github.application.dto.PingPayload;
 import com.example.githubprconsumer.github.application.dto.PullRequestPayload;
 import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -71,21 +69,14 @@ public class GithubRepositoryController {
         // 여기서 예외처리를 해야한다.
     }
 
-    @GetMapping("/repositories/{repositoryId}/webhooks")
-    @Operation(description = "레포지토리의 정보를 리턴하는 GET API")
-    public GithubRepositoryResponseDto getRepositoryInfo(@PathVariable Long repositoryId){
-        return githubRepositoryService.getGithubRepository(repositoryId);
-    }
-
-    // TODO : 인증 방식이 결정되면, 인증 유저만 수정/삭제 하도록 한다.
     @PutMapping("/repositories/{repositoryId}/counts")
     @Operation(description = "레포지토리에서 발생한 PR의 리뷰어 수를 변경하는 API. 콜라보레이터가 4명(자신포함) 이라면 최대 3명까지 가능하다.")
     public void updateAssigneeCount(@PathVariable Long repositoryId,
-                                    @RequestBody AssigneeUpdateRequestDto assigneeUpdateRequestDto){
-        githubRepositoryService.updateAssigneeCount(repositoryId, assigneeUpdateRequestDto.count());
+                                    @RequestBody AssigneeUpdateRequestDto assigneeUpdateRequestDto,
+                                    @AuthenticationPrincipal CustomOauth2User customOauth2User){
+        githubRepositoryService.updateAssigneeCount(repositoryId, assigneeUpdateRequestDto.count(), customOauth2User.login());
     }
 
-    // TODO : 인증 방식이 결정되면, 인증 유저만 수정/삭제 하도록 한다.
     @DeleteMapping("/repositories/{repositoryId}")
     @Operation(description = "내가 가입한 레포지토리에서 나온다")
     public void deleteGithubRepository(@PathVariable Long repositoryId, @AuthenticationPrincipal CustomOauth2User customOauth2User){

@@ -3,6 +3,8 @@ package com.example.githubprconsumer.messenger.application;
 import com.example.githubprconsumer.global.application.EncryptService;
 import com.example.githubprconsumer.message.application.MessageService;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
+import com.example.githubprconsumer.messenger.application.dto.MessengerAddRequestDto;
+import com.example.githubprconsumer.messenger.application.dto.MessengerResponseDto;
 import com.example.githubprconsumer.messenger.domain.Messenger;
 import com.example.githubprconsumer.messenger.domain.MessengerException;
 import com.example.githubprconsumer.messenger.domain.MessengerJpaRepository;
@@ -31,10 +33,9 @@ public class MessengerService {
 
     private final EncryptService encryptService;
 
-    // TODO : 여기서 List<MessengerService(이름은 생각해보자)> 를 주입받고, 디스코드 뿐만 아니라 모든 메신저 서비스를 사용할 수 있도록 변경한다.
     private final MessageSendServiceFactory messageSendServiceFactory;
 
-    public MessengerResponseDto addNewMessenger(MessengerAddRequestDto messengerAddRequestDto){
+    public MessengerResponseDto addNewMessenger(MessengerAddRequestDto messengerAddRequestDto, String login){
         Long repositoryId = messengerAddRequestDto.repositoryId();
         MessengerType messengerType = messengerAddRequestDto.messengerType();
         String webhookUrl = messengerAddRequestDto.webhookUrl();
@@ -45,13 +46,13 @@ public class MessengerService {
         }
 
         String encryptedWebhookUrl = encryptService.encrypt(webhookUrl);
-        Messenger messenger = new Messenger(repositoryId, messengerType, encryptedWebhookUrl);
+        Messenger messenger = new Messenger(repositoryId, messengerType, encryptedWebhookUrl, login);
         messengerJpaRepository.save(messenger);
 
         MessageSendService messageSendService = messageSendServiceFactory.getMessageSendService(messengerType);
         messageSendService.sendMessage(webhookUrl, MESSENGER_ADDED + SERVICE_URL + encryptedWebhookUrl);
 
-        return new MessengerResponseDto(repositoryId, messengerType, encryptedWebhookUrl);
+        return MessengerResponseDto.of(messenger);
     }
 
     public void activateMessenger(String encodedWebhookUrl){
@@ -76,14 +77,22 @@ public class MessengerService {
         });
     }
 
-    public void deleteMessenger(Long messengerId){
+    public void deleteMessenger(Long messengerId, String login){
+        Messenger messenger = messengerJpaRepository.findById(messengerId).orElseThrow(
+                () -> new MessengerException.MessengerNotFoundException(messengerId)
+        );
+
+        if (!messenger.isMine(login)){
+            throw new MessengerException.NotMyMessengerException(messenger.getLogin());
+        }
+
         messengerJpaRepository.deleteById(messengerId);
         messageService.deleteAllMessagesByMessengerId(messengerId);
     }
 
-    public void deleteAllByRepositoryId(Long repositoryId){
+    public void deleteAllByRepositoryId(Long repositoryId, String login){
         List<Messenger> messengerList = messengerJpaRepository.findAllByRepositoryId(repositoryId);
-        messengerList.forEach(each -> deleteMessenger(each.getId()));
+        messengerList.forEach(each -> deleteMessenger(each.getId(), login));
         messengerJpaRepository.deleteAllByRepositoryId(repositoryId);
     }
 }

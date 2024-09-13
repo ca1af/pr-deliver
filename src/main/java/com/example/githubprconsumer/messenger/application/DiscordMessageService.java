@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.messenger.application;
 
+import com.example.githubprconsumer.messenger.application.dto.DiscordMessage;
 import com.example.githubprconsumer.messenger.domain.MessengerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
