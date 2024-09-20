@@ -1,7 +1,9 @@
-package com.example.githubprconsumer.collaborator;
+package com.example.githubprconsumer.github.application;
 
-import com.example.githubprconsumer.github.application.GithubApiService;
 import com.example.githubprconsumer.github.application.dto.GithubCollaboratorInfo;
+import com.example.githubprconsumer.github.domain.Collaborator;
+import com.example.githubprconsumer.github.domain.CollaboratorException;
+import com.example.githubprconsumer.github.domain.CollaboratorJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;

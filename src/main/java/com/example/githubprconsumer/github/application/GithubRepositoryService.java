@@ -1,15 +1,12 @@
 package com.example.githubprconsumer.github.application;
 
-import com.example.githubprconsumer.collaborator.Collaborator;
-import com.example.githubprconsumer.collaborator.CollaboratorException;
-import com.example.githubprconsumer.collaborator.CollaboratorService;
+import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
+import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
+import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
+import com.example.githubprconsumer.github.domain.Collaborator;
 import com.example.githubprconsumer.github.domain.GithubRepository;
 import com.example.githubprconsumer.github.domain.GithubRepositoryException;
 import com.example.githubprconsumer.github.domain.GithubRepositoryJpaRepository;
-import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
-import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;
-import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
-import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.messenger.application.MessengerService;
 import lombok.RequiredArgsConstructor;
@@ -47,26 +44,18 @@ public class GithubRepositoryService {
         githubRepository.activateWebhook();
     }
 
-    public GithubRepositoryResponseDto getGithubRepository(Long repositoryId){
-        GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
-                () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
-        );
-
-        return GithubRepositoryResponseDto.of(githubRepository);
-    }
-
     @Transactional
-    public void updateAssigneeCount(Long repositoryId, Integer assigneeCount){
+    public void updateAssigneeCount(Long repositoryId, Integer assigneeCount, String login){
         GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
                 () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
         );
 
-        Integer collaboratorCount = collaboratorService.getCollaboratorCount(repositoryId);
-        if (assigneeCount > collaboratorCount) {
-            throw new CollaboratorException.InvalidCollaboratorCountException();
+        if (githubRepository.isNotMine(login)){
+            throw new GithubRepositoryException.NotMyGithubRepositoryException(login, githubRepository.getFullName());
         }
 
-        githubRepository.updateAssigneeCount(assigneeCount);
+        Integer collaboratorCount = collaboratorService.getCollaboratorCount(repositoryId);
+        githubRepository.updateAssigneeCount(assigneeCount, collaboratorCount);
     }
 
     public void sendWebhookNotification(String webhookUrl, GithubPRResponse githubPRResponse){
@@ -83,12 +72,12 @@ public class GithubRepositoryService {
 
     @Transactional
     public void deleteGithubRepository(Long repositoryId, String login){
-        messengerService.deleteAllByRepositoryId(repositoryId);
+        messengerService.deleteAllByRepositoryId(repositoryId, login);
         GithubRepository githubRepository = jpaRepository.findById(repositoryId).orElseThrow(
                 () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryId)
         );
         String fullName = githubRepository.getFullName();
-        if (!githubRepository.getOwnerLogin().equals(login)){
+        if (githubRepository.isNotMine(login)){
             throw new GithubRepositoryException.NotMyGithubRepositoryException(login, fullName);
         }
 

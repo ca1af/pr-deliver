@@ -36,7 +36,19 @@ public class GithubRepository {
         this.isActiveWebhook = true;
     }
 
-    public void updateAssigneeCount(int count) {
-        this.assigneeCount = count;
+    public void updateAssigneeCount(int inputCount, int collaboratorCount) {
+        if (inputCount < 1){
+            throw new CollaboratorException.InvalidCollaboratorCountException();
+        }
+
+        if (inputCount > collaboratorCount - 1) {
+            throw new CollaboratorException.InvalidCollaboratorCountException();
+        }
+
+        this.assigneeCount = inputCount;
+    }
+
+    public boolean isNotMine(String login){
+        return !ownerLogin.equals(login);
     }
 }

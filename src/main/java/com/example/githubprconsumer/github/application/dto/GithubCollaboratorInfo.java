@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.github.application.dto;
 
-import com.example.githubprconsumer.collaborator.Collaborator;
+import com.example.githubprconsumer.github.domain.Collaborator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

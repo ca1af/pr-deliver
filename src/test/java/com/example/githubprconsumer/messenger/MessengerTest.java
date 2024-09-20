@@ -6,12 +6,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class MessengerTest {
+    private static final String LOGIN = "login";
     @Test
     void constructorTest() {
         Messenger messenger = new Messenger(
                 999999L,
                 MessengerType.DISCORD,
-                "random-webhook-url"
+                "random-webhook-url",
+                LOGIN
         );
 
         Assertions.assertThat(messenger).isNotNull();
@@ -23,7 +25,8 @@ class MessengerTest {
         Messenger messenger = new Messenger(
                 999999L,
                 MessengerType.DISCORD,
-                "random-webhook-url"
+                "random-webhook-url",
+                LOGIN
         );
         messenger.activate();
         Assertions.assertThat(messenger.isActive()).isTrue();

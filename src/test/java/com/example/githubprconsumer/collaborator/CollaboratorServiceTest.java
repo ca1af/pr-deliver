@@ -1,7 +1,11 @@
 package com.example.githubprconsumer.collaborator;
 
+import com.example.githubprconsumer.github.application.CollaboratorService;
 import com.example.githubprconsumer.github.application.GithubApiService;
 import com.example.githubprconsumer.github.application.dto.GithubCollaboratorInfo;
+import com.example.githubprconsumer.github.domain.Collaborator;
+import com.example.githubprconsumer.github.domain.CollaboratorException;
+import com.example.githubprconsumer.github.domain.CollaboratorJpaRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

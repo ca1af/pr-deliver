@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.messenger.application;
+package com.example.githubprconsumer.messenger.application.dto;
 
 import com.example.githubprconsumer.messenger.domain.MessengerType;
 

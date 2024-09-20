@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.messenger.application;
 
-import com.example.githubprconsumer.messenger.application.dto.DiscordMessage;
+import com.example.githubprconsumer.messenger.application.dto.SlackMessage;
 import com.example.githubprconsumer.messenger.domain.MessengerType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -12,14 +12,14 @@ import org.springframework.web.client.RestClientException;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class DiscordMessageService implements MessageSendService{
+public class SlackMessageService implements MessageSendService {
 
     private final RestClient restClient;
 
     @Override
     public void sendMessage(String webhookUrl, String messageContent) {
         try {
-            DiscordMessage message = new DiscordMessage(messageContent);
+            SlackMessage message = new SlackMessage(messageContent);
 
             restClient.post()
                     .uri(webhookUrl)
@@ -28,15 +28,16 @@ public class DiscordMessageService implements MessageSendService{
                     .retrieve()
                     .toBodilessEntity();
 
-            log.info("Successfully sent message to Discord webhook: {}", webhookUrl);
+            log.info("Successfully sent message to Slack webhook: {}", webhookUrl);
         } catch (RestClientException e) {
-            log.error("Failed to send message to Discord webhook {}: {}", webhookUrl, e.getMessage());
+            log.error("Failed to send message to Slack webhook {}: {}", webhookUrl, e.getMessage());
             throw e;
         }
     }
 
     @Override
     public MessengerType getMessengerType() {
-        return MessengerType.DISCORD;
+        return MessengerType.SLACK;
     }
 }
+
