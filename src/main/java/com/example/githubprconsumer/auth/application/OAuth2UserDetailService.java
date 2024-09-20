@@ -1,8 +1,8 @@
 package com.example.githubprconsumer.auth.application;
 
 import com.example.githubprconsumer.auth.domain.CustomOauth2User;
-import com.example.githubprconsumer.member.domain.Member;
 import com.example.githubprconsumer.member.application.MemberService;
+import com.example.githubprconsumer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

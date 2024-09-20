@@ -1,12 +1,12 @@
 package com.example.githubprconsumer.github.application;
 
-import com.example.githubprconsumer.github.domain.GithubBotException;
+import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
 import com.example.githubprconsumer.github.application.dto.GithubInvitationsInfo;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.application.dto.InviterInfo;
-import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
-import com.example.githubprconsumer.member.domain.Member;
+import com.example.githubprconsumer.github.domain.GithubBotException;
 import com.example.githubprconsumer.member.application.MemberService;
+import com.example.githubprconsumer.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
