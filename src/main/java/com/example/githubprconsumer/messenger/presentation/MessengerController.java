@@ -1,9 +1,9 @@
 package com.example.githubprconsumer.messenger.presentation;
 
 import com.example.githubprconsumer.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.messenger.application.MessengerService;
 import com.example.githubprconsumer.messenger.application.dto.MessengerAddRequestDto;
 import com.example.githubprconsumer.messenger.application.dto.MessengerResponseDto;
-import com.example.githubprconsumer.messenger.application.MessengerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
