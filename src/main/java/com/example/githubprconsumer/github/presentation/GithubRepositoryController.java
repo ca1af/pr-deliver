@@ -39,13 +39,13 @@ public class GithubRepositoryController {
 
 
     @PostMapping("/repositories")
-    @Operation(description = "사용자가 레포지토리에 bot 계정을 추가 한 후 이 API 를 호출하면, 우리 서비스에 레포지토리의 정보가 등록된다.")
+    @Operation(summary = "사용자가 레포지토리에 bot 계정을 추가 한 후 이 API 를 호출하면, 우리 서비스에 레포지토리의 정보가 등록된다.")
     public void registerRepository(@RequestParam @Parameter(description = "레포지토리의 풀네임 ex : ca1af/review-provider") String fullName){
         githubBotService.checkAndApproveInvitations(fullName);
     }
 
     @PostMapping("/{hookUrl}")
-    @Operation(description = "PR, Ping 등 웹훅 이벤트가 발생되었을 때 호출되는 API (프론트측에서 사용하지 않는 API)")
+    @Operation(summary = "PR, Ping 등 웹훅 이벤트가 발생되었을 때 호출되는 API (프론트측에서 사용하지 않는 API)")
     public void createWebhookMessage(@RequestHeader("X-GitHub-Event") String eventType,
                                      @PathVariable String hookUrl,
                                      @RequestBody WebhookResponse webhookResponse) throws JsonProcessingException {
@@ -70,7 +70,7 @@ public class GithubRepositoryController {
     }
 
     @PutMapping("/repositories/{repositoryId}/counts")
-    @Operation(description = "레포지토리에서 발생한 PR의 리뷰어 수를 변경하는 API. 콜라보레이터가 4명(자신포함) 이라면 최대 3명까지 가능하다.")
+    @Operation(summary = "레포지토리에서 발생한 PR의 리뷰어 수를 변경하는 API. 콜라보레이터가 4명(자신포함) 이라면 최대 3명까지 가능하다.")
     public void updateAssigneeCount(@PathVariable Long repositoryId,
                                     @RequestBody AssigneeUpdateRequestDto assigneeUpdateRequestDto,
                                     @AuthenticationPrincipal CustomOauth2User customOauth2User){
@@ -78,7 +78,7 @@ public class GithubRepositoryController {
     }
 
     @DeleteMapping("/repositories/{repositoryId}")
-    @Operation(description = "내가 가입한 레포지토리에서 나온다")
+    @Operation(summary = "내가 가입한 레포지토리에서 나온다")
     public void deleteGithubRepository(@PathVariable Long repositoryId, @AuthenticationPrincipal CustomOauth2User customOauth2User){
         githubRepositoryService.deleteGithubRepository(repositoryId, customOauth2User.login());
     }

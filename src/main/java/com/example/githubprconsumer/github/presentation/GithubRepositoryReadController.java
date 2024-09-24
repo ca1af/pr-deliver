@@ -4,6 +4,10 @@ import com.example.githubprconsumer.github.application.GithubRepositoryReader;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryDetailResponseDto;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,12 +24,20 @@ public class GithubRepositoryReadController {
 
     @GetMapping("/repositories/{repositoryId}")
     @Operation(summary = "레포지토리의 상세 정보를 리턴하는 GET API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 레포지토리 상세 정보가 반환되었습니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = GithubRepositoryDetailResponseDto.class)))
+    })
     public GithubRepositoryDetailResponseDto getRepositoryInfo(@PathVariable Long repositoryId){
         return githubRepositoryReader.getGithubRepository(repositoryId);
     }
 
     @GetMapping("/repositories")
     @Operation(summary = "List 형태의 레포지토리의 정보를 리턴하는 GET API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적으로 레포지토리 리스트가 반환되었습니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = GithubRepositoryResponseDto.class)))
+    })
     public List<GithubRepositoryResponseDto> getRepositories(@RequestParam String ownerLogin){
         return githubRepositoryReader.getGithubRepositories(ownerLogin);
     }

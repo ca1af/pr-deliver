@@ -17,7 +17,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/members/me")
-    @Operation(description = "회원 스스로의 정보를 리턴한다.")
+    @Operation(summary = "회원 스스로의 정보를 리턴한다.")
     public MemberResponseDto getMyInfo(@AuthenticationPrincipal OAuth2User customOauth2User) {
         return memberService.getMemberResponseDto(customOauth2User.getName());
     }
