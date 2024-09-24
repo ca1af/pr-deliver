@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.github.application;
 
-import com.example.githubprconsumer.github.application.dto.GithubRepositoryResponseDto;
+import com.example.githubprconsumer.github.application.dto.GithubRepositoryDetailResponseDto;
 import com.example.githubprconsumer.github.domain.GithubRepository;
 import com.example.githubprconsumer.github.domain.GithubRepositoryException;
 import com.example.githubprconsumer.github.domain.GithubRepositoryJpaRepository;
@@ -31,7 +31,7 @@ class GithubRepositoryReaderTest {
         jpaRepository.save(repository);
 
         // When
-        GithubRepositoryResponseDto responseDto = githubRepositoryReader.getGithubRepository(repository.getId());
+        GithubRepositoryDetailResponseDto responseDto = githubRepositoryReader.getGithubRepository(repository.getId());
 
         // Then
         assertThat(responseDto.fullName()).isEqualTo("repository-full-name");

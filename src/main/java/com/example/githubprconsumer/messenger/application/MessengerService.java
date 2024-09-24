@@ -52,7 +52,7 @@ public class MessengerService {
         MessageSendService messageSendService = messageSendServiceFactory.getMessageSendService(messengerType);
         messageSendService.sendMessage(webhookUrl, MESSENGER_ADDED + SERVICE_URL + encryptedWebhookUrl);
 
-        return MessengerResponseDto.of(messenger);
+        return MessengerResponseDto.ofNew(messenger);
     }
 
     public void activateMessenger(String encodedWebhookUrl){
