@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.global.presentation;
 
-import com.example.githubprconsumer.global.application.ApiResponse;
+import com.example.githubprconsumer.global.application.CustomApiResponse;
 import com.example.githubprconsumer.global.exception.BadRequestException;
 import com.example.githubprconsumer.global.exception.NotAuthorizedException;
 import com.example.githubprconsumer.global.exception.NotFoundException;
@@ -17,33 +17,33 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse<String> handleException(Exception e) {
+    public CustomApiResponse<String> handleException(Exception e) {
         log.error("Exception : ", e);
-        return ApiResponse.ofFail(e.getMessage());
+        return CustomApiResponse.ofFail(e.getMessage());
     }
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse<String> handleBadRequest(Exception e) {
-        return ApiResponse.ofFail(e.getMessage());
+    public CustomApiResponse<String> handleBadRequest(Exception e) {
+        return CustomApiResponse.ofFail(e.getMessage());
     }
 
     @ExceptionHandler(NotAuthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ApiResponse<String> handleNotAuthorized(Exception e) {
-        return ApiResponse.ofFail(e.getMessage());
+    public CustomApiResponse<String> handleNotAuthorized(Exception e) {
+        return CustomApiResponse.ofFail(e.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse<String> handleNotFound(Exception e) {
-        return ApiResponse.ofFail(e.getMessage());
+    public CustomApiResponse<String> handleNotFound(Exception e) {
+        return CustomApiResponse.ofFail(e.getMessage());
     }
 
     @ExceptionHandler(SystemException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse<String> handleSystemException(Exception e) {
-        return ApiResponse.ofFail(e.getMessage());
+    public CustomApiResponse<String> handleSystemException(Exception e) {
+        return CustomApiResponse.ofFail(e.getMessage());
     }
 
 }

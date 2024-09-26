@@ -1,13 +1,14 @@
 package com.example.githubprconsumer.messenger.presentation;
 
+import com.example.githubprconsumer.global.application.CustomApiResponse;
 import com.example.githubprconsumer.messenger.application.MessengerAliasService;
 import com.example.githubprconsumer.messenger.application.dto.MessengerAliasAddRequestDto;
 import com.example.githubprconsumer.messenger.application.dto.MessengerAliasResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +39,8 @@ public class MessengerAliasController {
             @ApiResponse(responseCode = "200", description = "성공적으로 메신저 별명 리스트가 반환되었습니다.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessengerAliasResponseDto.class)))
     })
-    public List<MessengerAliasResponseDto> getMessengerAliasByMessengerType(@PathVariable Long messengerId) {
-        return messengerAliasService.findAllByMessengerId(messengerId);
+    public CustomApiResponse<List<MessengerAliasResponseDto>> getMessengerAliasByMessengerType(@PathVariable Long messengerId) {
+        List<MessengerAliasResponseDto> data = messengerAliasService.findAllByMessengerId(messengerId);
+        return CustomApiResponse.ofSuccess(data);
     }
 }

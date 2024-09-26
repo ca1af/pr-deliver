@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.messenger.presentation;
 
+import com.example.githubprconsumer.global.application.CustomApiResponse;
 import com.example.githubprconsumer.messenger.application.MessengerReader;
 import com.example.githubprconsumer.messenger.application.dto.MessengerResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,9 +34,10 @@ public class MessengerReadController {
             @ApiResponse(responseCode = "404", description = "해당 레포지토리를 찾을 수 없습니다.", content = @Content),
             @ApiResponse(responseCode = "500", description = "서버 에러가 발생했습니다.", content = @Content)
     })
-    public List<MessengerResponseDto> getAllMessagesByRepositoryId(
+    public CustomApiResponse<List<MessengerResponseDto>> getAllMessagesByRepositoryId(
             @Parameter(description = "메신저를 찾고자 하는 레포지토리의 ID", example = "1")
             @PathVariable Long repositoryId) {
-        return messengerReader.findAllByRepositoryId(repositoryId);
+        List<MessengerResponseDto> data = messengerReader.findAllByRepositoryId(repositoryId);
+        return CustomApiResponse.ofSuccess(data);
     }
 }

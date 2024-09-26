@@ -20,14 +20,10 @@ public class CustomApiResponse<T> {
     }
 
     public static <T> CustomApiResponse<T> ofSuccess(T data) {
-        return new CustomApiResponse<>("정상적으로 처리되었습니다", "Success", data);
+        return new CustomApiResponse<>("정상적으로 조회 되었습니다", "Success", data);
     }
 
     public static <T> CustomApiResponse<T> ofFail(String message) {
         return new CustomApiResponse<>(message, "Fail");
-    }
-
-    public static CustomApiResponse<Void> ofSuccess(){
-        return new CustomApiResponse<>("정상적으로 처리되었습니다", "Success");
     }
 }

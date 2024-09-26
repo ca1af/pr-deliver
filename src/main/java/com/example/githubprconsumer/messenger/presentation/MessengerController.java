@@ -1,6 +1,7 @@
 package com.example.githubprconsumer.messenger.presentation;
 
 import com.example.githubprconsumer.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.global.application.CustomApiResponse;
 import com.example.githubprconsumer.messenger.application.MessengerService;
 import com.example.githubprconsumer.messenger.application.dto.MessengerAddRequestDto;
 import com.example.githubprconsumer.messenger.application.dto.MessengerResponseDto;
@@ -34,8 +35,9 @@ public class MessengerController {
             @ApiResponse(responseCode = "200", description = "성공적으로 메신저가 추가되었습니다.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessengerResponseDto.class)))
     })
-    public MessengerResponseDto addMessenger(@RequestBody MessengerAddRequestDto messengerAddRequestDto, @AuthenticationPrincipal CustomOauth2User customOauth2User){
-        return messengerService.addNewMessenger(messengerAddRequestDto, customOauth2User.login());
+    public CustomApiResponse<MessengerResponseDto> addMessenger(@RequestBody MessengerAddRequestDto messengerAddRequestDto, @AuthenticationPrincipal CustomOauth2User customOauth2User){
+        MessengerResponseDto data = messengerService.addNewMessenger(messengerAddRequestDto, customOauth2User.login());
+        return CustomApiResponse.ofSuccess(data);
     }
 
     @GetMapping("/{encryptedWebhookUrl}")
