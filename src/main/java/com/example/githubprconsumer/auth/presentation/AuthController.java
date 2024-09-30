@@ -16,7 +16,7 @@ public class AuthController {
 
     private final OAuth2Service oAuth2Service;
 
-    @GetMapping("/oauth2/login")
+    @GetMapping("/oauth2/success")
     @Operation(summary = "Oauth2 로그인을 수행한다")
     public TokenResponseDto oauth2Login(@RequestParam String code) {
         return oAuth2Service.login(code);

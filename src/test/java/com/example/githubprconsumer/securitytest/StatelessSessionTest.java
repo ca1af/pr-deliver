@@ -1,6 +1,7 @@
 package com.example.githubprconsumer.securitytest;
 
 import com.example.githubprconsumer.auth.JwtAuthenticationFilter;
+import com.example.githubprconsumer.auth.application.OAuth2Service;
 import com.example.githubprconsumer.auth.presentation.AuthController;
 import com.example.githubprconsumer.securitytest.config.StatelessSecurityConfig;
 import jakarta.servlet.http.HttpSession;
@@ -27,6 +28,9 @@ class StatelessSessionTest {
 
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private OAuth2Service oAuth2Service;
 
     @Test
     @WithMockOAuth2User(attributes = {"name:99999"})
