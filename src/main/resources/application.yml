@@ -27,6 +27,7 @@ spring:
           github:
             client-id: ENC(kXLCvWUqP4zjIdO9UdUqHoW8JWx6QhmGL8xDHjTonZ8=)
             client-secret: ENC(EL3u3ItlXuIqc67Y8J+9rDJFEHYFbDS9TmJysdQ5/kRXVCRe7iXpLsp9p663LSYRIjmMoUrhxIg=)
+            redirect-uri: https://pr-deliver.vercel.app/api/auth/github/callback
 
 logging:
   level:
