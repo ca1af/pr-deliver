@@ -48,16 +48,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
+          skip_host_key_check: true
           script: |
-            # Docker Compose 파일 전송
             scp docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
-
-            # 이전에 실행된 컨테이너 중지 및 삭제
             cd /home/ubuntu/
             docker-compose down || true
-
-            # 최신 Docker 이미지를 Docker Hub에서 풀
-            docker-compose pull
-
-            # Docker Compose로 애플리케이션과 DB 다시 실행
-            docker-compose up -d
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} docker-compose pull
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} docker-compose up -d
