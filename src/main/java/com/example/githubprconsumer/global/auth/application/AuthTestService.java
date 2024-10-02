@@ -1,6 +1,6 @@
-package com.example.githubprconsumer.auth.application;
+package com.example.githubprconsumer.global.auth.application;
 
-import com.example.githubprconsumer.auth.application.dto.TokenResponseDto;
+import com.example.githubprconsumer.global.auth.application.dto.TokenResponseDto;
 import com.example.githubprconsumer.member.application.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

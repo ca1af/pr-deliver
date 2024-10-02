@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.auth.domain;
+package com.example.githubprconsumer.global.auth.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;

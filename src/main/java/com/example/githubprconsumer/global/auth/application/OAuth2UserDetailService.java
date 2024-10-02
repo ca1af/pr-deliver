@@ -1,6 +1,6 @@
-package com.example.githubprconsumer.auth.application;
+package com.example.githubprconsumer.global.auth.application;
 
-import com.example.githubprconsumer.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.member.application.MemberService;
 import com.example.githubprconsumer.member.domain.Member;
 import lombok.RequiredArgsConstructor;

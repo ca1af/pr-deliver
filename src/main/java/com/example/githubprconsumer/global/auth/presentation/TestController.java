@@ -1,7 +1,7 @@
-package com.example.githubprconsumer.auth.presentation;
+package com.example.githubprconsumer.global.auth.presentation;
 
-import com.example.githubprconsumer.auth.application.AuthTestService;
-import com.example.githubprconsumer.auth.application.dto.TokenResponseDto;
+import com.example.githubprconsumer.global.auth.application.AuthTestService;
+import com.example.githubprconsumer.global.auth.application.dto.TokenResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.PostMapping;

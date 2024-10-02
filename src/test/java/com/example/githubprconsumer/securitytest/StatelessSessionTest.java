@@ -1,8 +1,8 @@
 package com.example.githubprconsumer.securitytest;
 
-import com.example.githubprconsumer.auth.JwtAuthenticationFilter;
-import com.example.githubprconsumer.auth.application.OAuth2Service;
-import com.example.githubprconsumer.auth.presentation.AuthController;
+import com.example.githubprconsumer.global.auth.JwtAuthenticationFilter;
+import com.example.githubprconsumer.global.auth.application.OAuth2Service;
+import com.example.githubprconsumer.global.auth.presentation.AuthController;
 import com.example.githubprconsumer.securitytest.config.StatelessSecurityConfig;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;

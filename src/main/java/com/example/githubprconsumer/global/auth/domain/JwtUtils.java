@@ -1,4 +1,4 @@
-package com.example.githubprconsumer.auth.domain;
+package com.example.githubprconsumer.global.auth.domain;
 
 public class JwtUtils {
 

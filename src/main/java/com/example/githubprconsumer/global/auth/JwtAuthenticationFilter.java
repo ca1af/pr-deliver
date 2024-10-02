@@ -1,6 +1,6 @@
-package com.example.githubprconsumer.auth;
+package com.example.githubprconsumer.global.auth;
 
-import com.example.githubprconsumer.auth.application.JwtProvider;
+import com.example.githubprconsumer.global.auth.application.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

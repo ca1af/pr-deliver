@@ -1,8 +1,8 @@
-package com.example.githubprconsumer.auth.application;
+package com.example.githubprconsumer.global.auth.application;
 
-import com.example.githubprconsumer.auth.domain.AuthenticationException;
-import com.example.githubprconsumer.auth.domain.CustomOauth2User;
-import com.example.githubprconsumer.auth.domain.JwtUtils;
+import com.example.githubprconsumer.global.auth.domain.AuthenticationException;
+import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.global.auth.domain.JwtUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

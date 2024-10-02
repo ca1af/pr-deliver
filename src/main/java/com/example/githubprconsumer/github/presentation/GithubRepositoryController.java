@@ -1,6 +1,6 @@
 package com.example.githubprconsumer.github.presentation;
 
-import com.example.githubprconsumer.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.github.application.GithubBotService;
 import com.example.githubprconsumer.github.application.GithubRepositoryService;
 import com.example.githubprconsumer.github.application.dto.AssigneeUpdateRequestDto;

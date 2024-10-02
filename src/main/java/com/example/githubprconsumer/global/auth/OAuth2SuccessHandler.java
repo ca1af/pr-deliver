@@ -1,7 +1,7 @@
-package com.example.githubprconsumer.auth;
+package com.example.githubprconsumer.global.auth;
 
-import com.example.githubprconsumer.auth.application.JwtProvider;
-import com.example.githubprconsumer.auth.domain.CustomOauth2User;
+import com.example.githubprconsumer.global.auth.application.JwtProvider;
+import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +13,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
+/**
+ * @deprecated 프론트쪽 이슈가 없다면 삭제한다.
+ */
 @RequiredArgsConstructor
 @Component
 @Log4j2
+@Deprecated(forRemoval = true)
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProvider tokenProvider;
@@ -35,7 +39,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .build().toUriString();
 
         log.info(redirectUrl);
-        // TODO : 여기서 리다이렉트를 프론트쪽으로 바꿔준다.
 
         response.sendRedirect(redirectUrl);
     }
