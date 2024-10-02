@@ -48,7 +48,6 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          skip_host_key_check: true
           script: |
             scp docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
             cd /home/ubuntu/
