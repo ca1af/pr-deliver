@@ -52,5 +52,7 @@ jobs:
             scp docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
             cd /home/ubuntu/
             docker-compose down || true
+            docker stop pr-deliver || true
+            docker rm pr-deliver || true
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} docker-compose pull
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} docker-compose up -d
