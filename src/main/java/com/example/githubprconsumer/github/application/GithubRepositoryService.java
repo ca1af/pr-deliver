@@ -3,7 +3,6 @@ package com.example.githubprconsumer.github.application;
 import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
-import com.example.githubprconsumer.github.domain.Collaborator;
 import com.example.githubprconsumer.github.domain.GithubRepository;
 import com.example.githubprconsumer.github.domain.GithubRepositoryException;
 import com.example.githubprconsumer.github.domain.GithubRepositoryJpaRepository;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,11 @@ public class GithubRepositoryService {
 
     @Transactional
     public void addGithubRepository(GithubRepositoryAddRequestDto githubRepositoryAddRequestDto){
+        Optional<GithubRepository> foundRepository = jpaRepository.findByOwnerLoginAndFullName(githubRepositoryAddRequestDto.login(), githubRepositoryAddRequestDto.fullName());
+        if (foundRepository.isPresent()){
+            return;
+        }
+
         GithubRepository githubRepository = githubRepositoryAddRequestDto.toEntity();
         jpaRepository.save(githubRepository);
         collaboratorService.addCollaborators(githubRepository.getId(), githubRepository.getFullName());
@@ -63,11 +68,10 @@ public class GithubRepositoryService {
                 () -> new GithubRepositoryException.GithubRepositoryNotFoundException(webhookUrl)
         );
 
-        List<Collaborator> collaborators = collaboratorService.getCollaborators(githubRepository.getId(), githubPRResponse.prAuthor());
-        List<String> assigneeLogins = collaborators.stream().map(Collaborator::getLogin).toList();
+        List<String> collaboratorLogins = collaboratorService.getAssigneeLogins(githubRepository.getId(), githubRepository.getAssigneeCount(), githubPRResponse.prAuthor());
 
         // 여기서 노티를 보낸다.
-        messengerService.sendMessage(githubRepository.getId(), githubPRResponse, assigneeLogins);
+        messengerService.sendMessage(githubRepository.getId(), githubPRResponse, collaboratorLogins);
     }
 
     @Transactional

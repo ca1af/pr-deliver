@@ -35,6 +35,8 @@ public class MessengerService {
 
     private final MessageSendServiceFactory messageSendServiceFactory;
 
+    private final MessengerAliasService messengerAliasService;
+
     public MessengerResponseDto addNewMessenger(MessengerAddRequestDto messengerAddRequestDto, String login){
         Long repositoryId = messengerAddRequestDto.repositoryId();
         MessengerType messengerType = messengerAddRequestDto.messengerType();
@@ -63,14 +65,15 @@ public class MessengerService {
         messenger.activate();
     }
 
-    public void sendMessage(Long githubRepositoryId, GithubPRResponse githubPRResponse, List<String> assigneeLogins){
+    public void sendMessage(Long githubRepositoryId, GithubPRResponse githubPRResponse, List<String> collaboratorsLogin){
         List<Messenger> messengerList = messengerJpaRepository.findAllByRepositoryId(githubRepositoryId);
         if (messengerList.isEmpty()){
             throw new MessengerException.MessengerNotFoundException();
         }
 
         messengerList.forEach(messenger -> {
-            String defaultMessage = messageService.getMessage(messenger.getId(), githubPRResponse, assigneeLogins);
+            List<String> appliedAliases = messengerAliasService.applyMessengerAlias(messenger.getId(), collaboratorsLogin);
+            String defaultMessage = messageService.getMessage(messenger.getId(), githubPRResponse, appliedAliases);
             String webhookUrl = encryptService.decrypt(messenger.getWebhookUrl());
             MessageSendService messageSendService = messageSendServiceFactory.getMessageSendService(messenger.getMessengerType());
             messageSendService.sendMessage(webhookUrl, defaultMessage);

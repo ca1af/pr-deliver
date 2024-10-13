@@ -12,4 +12,6 @@ public interface GithubRepositoryJpaRepository extends JpaRepository<GithubRepos
     Optional<GithubRepository> findByWebhookUrl(String webhookUrl);
 
     List<GithubRepository> findAllByOwnerLogin(String ownerLogin);
+
+    Optional<GithubRepository> findByOwnerLoginAndFullName(String ownerLogin, String fullName);
 }

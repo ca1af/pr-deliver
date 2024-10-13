@@ -1,15 +1,14 @@
 package com.example.githubprconsumer.bot;
 
-import com.example.githubprconsumer.github.domain.GithubBotException;
+import com.example.githubprconsumer.github.application.GithubApiService;
 import com.example.githubprconsumer.github.application.GithubBotService;
+import com.example.githubprconsumer.github.application.GithubRepositoryService;
+import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
 import com.example.githubprconsumer.github.application.dto.GithubInvitationsInfo;
+import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryInfo;
 import com.example.githubprconsumer.github.application.dto.InviterInfo;
-import com.example.githubprconsumer.github.application.GithubApiService;
-import com.example.githubprconsumer.github.application.GithubRepositoryService;
-import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
-import com.example.githubprconsumer.github.application.dto.BotRemoveEvent;
-import com.example.githubprconsumer.member.domain.Member;
+import com.example.githubprconsumer.github.domain.GithubBotException;
 import com.example.githubprconsumer.member.application.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,15 +47,13 @@ class GithubBotServiceTest {
 
     private String login;
 
-    private Member validMember;
-
     @BeforeEach
     void setUp() {
         login = "inviter-login";
         GithubRepositoryInfo githubRepositoryInfo = new GithubRepositoryInfo(1L, "full/name");
         InviterInfo inviterInfo = new InviterInfo(1L, login);
         validInvitation = new GithubInvitationsInfo(1, githubRepositoryInfo, "write", inviterInfo);
-        validMember = memberService.createIfNotExist(login);
+        memberService.createIfNotExist(login);
     }
 
     @Test

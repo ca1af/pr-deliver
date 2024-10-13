@@ -1,8 +1,8 @@
 package com.example.githubprconsumer.global.auth.application;
 
+import com.example.githubprconsumer.github.application.dto.GithubUser;
 import com.example.githubprconsumer.global.auth.application.dto.OAuth2CodeResponse;
 import com.example.githubprconsumer.global.auth.application.dto.TokenResponseDto;
-import com.example.githubprconsumer.github.application.dto.GithubUser;
 import com.example.githubprconsumer.member.application.MemberService;
 import com.example.githubprconsumer.member.domain.Member;
 import lombok.RequiredArgsConstructor;

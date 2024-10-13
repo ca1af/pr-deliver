@@ -33,19 +33,23 @@ class CollaboratorServiceTest {
     @MockBean
     private GithubApiService githubApiService;
 
+    private static final String BOT_LOGIN = "calafs-review-bot";
+
     @Test
     @DisplayName("Github 저장소에서 Collaborators를 가져와 저장소에 저장한다.")
     void testAddCollaborators() {
         // Given
         String fullName = "test/repository";
+        long repositoryId = 99999999L;
         GithubCollaboratorInfo collaboratorInfo = new GithubCollaboratorInfo("testLogin", "avatarUrl", "htmlUrl");
-        when(githubApiService.getCollaborators(fullName)).thenReturn(List.of(collaboratorInfo));
+        GithubCollaboratorInfo botInfo = new GithubCollaboratorInfo(BOT_LOGIN, "avatarUrl", "htmlUrl");
+        when(githubApiService.getCollaborators(fullName)).thenReturn(List.of(collaboratorInfo, botInfo));
 
         // When
-        collaboratorService.addCollaborators(99999999L, fullName);
+        collaboratorService.addCollaborators(repositoryId, fullName);
 
         // Then
-        List<Collaborator> savedCollaborators = collaboratorJpaRepository.findByRepositoryId(99999999L); // 해당 ID 사용
+        List<Collaborator> savedCollaborators = collaboratorJpaRepository.findAllByRepositoryId(repositoryId);
         SoftAssertions.assertSoftly(
                 softly -> {
                     softly.assertThat(savedCollaborators).hasSize(1);
@@ -55,6 +59,19 @@ class CollaboratorServiceTest {
                 }
         );
     }
+
+    @Test
+    @DisplayName("콜라보레이터 목록에 봇 계정이 추가되어 있지 않다면, 예외를 발생시킨다.")
+    void throwsWhenBotHasNotInvited() {
+        // Given
+        String fullName = "test/repository";
+        GithubCollaboratorInfo collaboratorInfo = new GithubCollaboratorInfo("testLogin", "avatarUrl", "htmlUrl");
+        when(githubApiService.getCollaborators(fullName)).thenReturn(List.of(collaboratorInfo));
+
+        assertThatThrownBy(() -> collaboratorService.addCollaborators(99999999L, fullName))
+                .isInstanceOf(CollaboratorException.BotHasNotInvitedException.class);
+    }
+
 
     @Test
     @DisplayName("저장된 Collaborator의 수를 정확하게 반환한다.")

@@ -29,11 +29,10 @@ public class GithubBotService {
     public void checkAndApproveInvitations(String fullName) {
         List<GithubInvitationsInfo> invitations = githubApiService.fetchInvitations();
 
-        GithubInvitationsInfo githubInvitationsInfo = invitations.stream().filter(each -> each.githubRepositoryInfo().fullName().equals(fullName))
+        GithubInvitationsInfo githubInvitationsInfo = invitations.stream()
+                .filter(each -> each.githubRepositoryInfo().fullName().equals(fullName))
                 .findAny()
-                .orElseThrow(
-                        () -> new GithubBotException.NotInvitedException(fullName)
-                );
+                .orElseThrow(() -> new GithubBotException.NotInvitedException(fullName));
         InviterInfo inviterInfo = githubInvitationsInfo.inviterInfo();
 
         validateInvitation(inviterInfo.login(), githubInvitationsInfo.permissions());

@@ -62,6 +62,27 @@ class GithubRepositoryServiceTest {
         verify(collaboratorService, times(1)).addCollaborators(savedRepository.get().getId(), "repository-full-name");
     }
 
+    @Test
+    @DisplayName("승인자가 이미 레포지토리를 소유하고 있다면, 추가하지 않는다.")
+    void ifMemberAlreadyApproved_dontAdd() {
+        // Given
+        String login = "test-user-login";
+        String fullName = "repository-full-name";
+        GithubRepository existingRepository = jpaRepository.save(new GithubRepository(login, fullName));
+        GithubRepositoryAddRequestDto dto = new GithubRepositoryAddRequestDto(login, fullName);
+
+        // When
+        githubRepositoryService.addGithubRepository(dto);
+
+        // Then
+        Optional<GithubRepository> foundRepository = jpaRepository.findByOwnerLoginAndFullName(login, fullName);
+        assertThat(foundRepository).isPresent();
+        assertThat(existingRepository).isEqualTo(foundRepository.get());
+        assertThat(foundRepository).contains(foundRepository.get());
+
+        // Collaborator가 추가되지 않았다는 것을 검증
+        verify(collaboratorService, times(0)).addCollaborators(foundRepository.get().getId(), fullName);
+    }
 
     @Test
     @DisplayName("Assignee 수를 업데이트할 때, 유효한 수인지 검증하고 업데이트한다.")

@@ -2,6 +2,7 @@ package com.example.githubprconsumer.github.domain;
 
 import com.example.githubprconsumer.global.exception.BadRequestException;
 import com.example.githubprconsumer.global.exception.NotFoundException;
+import com.example.githubprconsumer.global.exception.SystemException;
 
 public class CollaboratorException extends RuntimeException {
 
@@ -26,6 +27,15 @@ public class CollaboratorException extends RuntimeException {
 
         public InvalidCollaboratorCountException() {
             super(INVALID_COLLABORATOR_COUNT);
+        }
+    }
+
+    public static class BotHasNotInvitedException extends SystemException {
+
+        private static final String NOT_INVITED = "봇 계정에 대한 초대가 완료되지 않았습니다. fullName : %s";
+
+        public BotHasNotInvitedException(String fullName) {
+            super(String.format(NOT_INVITED, fullName));
         }
     }
 }

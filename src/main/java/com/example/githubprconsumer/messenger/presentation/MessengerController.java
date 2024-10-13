@@ -1,7 +1,7 @@
 package com.example.githubprconsumer.messenger.presentation;
 
-import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.global.application.CustomApiResponse;
+import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.messenger.application.MessengerService;
 import com.example.githubprconsumer.messenger.application.dto.MessengerAddRequestDto;
 import com.example.githubprconsumer.messenger.application.dto.MessengerResponseDto;

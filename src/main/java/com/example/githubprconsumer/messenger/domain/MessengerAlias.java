@@ -20,11 +20,14 @@ public class MessengerAlias {
 
     private Long messengerId;
 
+    private String login;
+
     private String alias;
 
-    public MessengerAlias(Long collaboratorId, Long messengerId, String alias) {
+    public MessengerAlias(Long collaboratorId, Long messengerId, String login, String alias) {
         this.collaboratorId = collaboratorId;
         this.messengerId = messengerId;
+        this.login = login;
         this.alias = alias;
     }
 }

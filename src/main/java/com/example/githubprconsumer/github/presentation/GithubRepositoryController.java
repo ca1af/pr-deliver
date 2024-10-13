@@ -1,6 +1,5 @@
 package com.example.githubprconsumer.github.presentation;
 
-import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.github.application.GithubBotService;
 import com.example.githubprconsumer.github.application.GithubRepositoryService;
 import com.example.githubprconsumer.github.application.dto.AssigneeUpdateRequestDto;
@@ -9,6 +8,7 @@ import com.example.githubprconsumer.github.application.dto.PingPayload;
 import com.example.githubprconsumer.github.application.dto.PullRequestPayload;
 import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
 import com.example.githubprconsumer.github.application.dto.WebhookResponse;
+import com.example.githubprconsumer.global.auth.domain.CustomOauth2User;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,6 +65,7 @@ public class GithubRepositoryController {
             GithubPRResponse githubPRResponse = new GithubPRResponse(githubPullRequest.title(), githubPullRequest.htmlUrl(), githubPullRequest.user().login());
             githubRepositoryService.sendWebhookNotification(hookUrl, githubPRResponse);
         }
+
 
         // 여기서 예외처리를 해야한다.
     }
