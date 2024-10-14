@@ -2,7 +2,6 @@ package com.example.githubprconsumer.github.domain;
 
 import com.example.githubprconsumer.global.exception.NotAuthorizedException;
 import com.example.githubprconsumer.global.exception.NotFoundException;
-import com.example.githubprconsumer.global.exception.SystemException;
 
 public class GithubRepositoryException extends RuntimeException{
     public static class GithubRepositoryNotFoundException extends NotFoundException {
@@ -17,15 +16,6 @@ public class GithubRepositoryException extends RuntimeException{
 
         public GithubRepositoryNotFoundException(String webhookUrl) {
             super(REPOSITORY_NOT_FOUND + WEBHOOK_URL + webhookUrl);
-        }
-    }
-
-    public static class UnsupportedRepositoryException extends SystemException {
-
-        private static final String INVALID_REPOSITORY = "등록되지 않은 레포지토리에 대한 요청입니다. fullName : ";
-
-        public UnsupportedRepositoryException(String fullName) {
-            super(INVALID_REPOSITORY + fullName);
         }
     }
 

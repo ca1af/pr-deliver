@@ -43,7 +43,7 @@ public class GithubRepositoryService {
     @Transactional
     public void activateWebhook(RepositoryInfo repositoryInfo){
         GithubRepository githubRepository = jpaRepository.findByFullName(repositoryInfo.fullName()).orElseThrow(
-                () -> new GithubRepositoryException.UnsupportedRepositoryException(repositoryInfo.fullName())
+                () -> new GithubRepositoryException.GithubRepositoryNotFoundException(repositoryInfo.fullName())
         );
 
         githubRepository.activateWebhook();
