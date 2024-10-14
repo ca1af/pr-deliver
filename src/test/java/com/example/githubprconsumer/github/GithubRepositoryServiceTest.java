@@ -3,6 +3,7 @@ package com.example.githubprconsumer.github;
 import com.example.githubprconsumer.github.application.CollaboratorService;
 import com.example.githubprconsumer.github.application.GithubRepositoryService;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
+import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
 import com.example.githubprconsumer.github.domain.Collaborator;
 import com.example.githubprconsumer.github.domain.CollaboratorException;
 import com.example.githubprconsumer.github.domain.GithubRepository;
@@ -116,6 +117,20 @@ class GithubRepositoryServiceTest {
     }
 
     @Test
+    @DisplayName("Assignee 수를 업데이트할 때, 내 레포가 아니면 예외를 발생시킨다")
+    void testUpdateAssigneeCount_NotMyRepo() {
+        // Given
+        String ownerLogin = "owner-login";
+        GithubRepository repository = new GithubRepository(ownerLogin, "repository-full-name");
+        jpaRepository.save(repository);
+
+        // When & Then
+        assertThatThrownBy(() -> githubRepositoryService.updateAssigneeCount(repository.getId(), 4, "notOwner"))
+                .isInstanceOf(GithubRepositoryException.NotMyGithubRepositoryException.class);
+    }
+
+
+    @Test
     @DisplayName("Webhook을 통해 알림을 보내고, 메신저 서비스를 통해 메시지를 전송한다.")
     void testSendWebhookNotification() {
         // Given
@@ -164,5 +179,21 @@ class GithubRepositoryServiceTest {
         // When
         assertThatThrownBy(() -> githubRepositoryService.deleteGithubRepository(repository.getId(), "notAuthorized"))
                 .isInstanceOf(GithubRepositoryException.NotMyGithubRepositoryException.class);
+    }
+
+    @Test
+    void activateWebhook() {
+        // Given
+        String ownerLogin = "owner-login";
+        String fullName = "repository-full-name";
+        GithubRepository repository = new GithubRepository(ownerLogin, fullName);
+        jpaRepository.save(repository);
+        RepositoryInfo repositoryInfo = new RepositoryInfo(fullName);
+
+        // when
+        githubRepositoryService.activateWebhook(repositoryInfo);
+
+        //then
+        assertThat(repository.isActiveWebhook()).isTrue();
     }
 }
