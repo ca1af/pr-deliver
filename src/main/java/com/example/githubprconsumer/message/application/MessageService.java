@@ -3,7 +3,6 @@ package com.example.githubprconsumer.message.application;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.message.domain.Message;
 import com.example.githubprconsumer.message.domain.MessageRepository;
-import com.example.githubprconsumer.messenger.application.MessengerAliasService;
 import com.example.githubprconsumer.messenger.domain.MessengerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +16,6 @@ import java.util.List;
 public class MessageService {
 
     private final MessageRepository messageRepository;
-
-    private final MessengerAliasService messengerAliasService;
 
     private static final String NO_COLLABORATOR = "PR 할당자가 없어요. 깃허브 Collaborator 를 추가 한 후 다시 시도 해 주세요";
 
