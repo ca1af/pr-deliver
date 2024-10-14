@@ -48,25 +48,6 @@ public class CollaboratorService {
         return collaboratorJpaRepository.countByRepositoryId(repositoryId);
     }
 
-    // TODO : 이 메서드를 없애고, 테스트를 여기로 돌린다.
-    public List<Collaborator> getCollaborators(Long repositoryId, String prAuthorLogin){
-        List<Collaborator> collaborators = collaboratorJpaRepository.findAllByRepositoryId(repositoryId);
-
-        if (collaborators.isEmpty()) {
-            throw new CollaboratorException.CollaboratorNotFoundException(repositoryId);
-        }
-
-        Collaborator prAuthor = collaborators.stream()
-                .filter(each -> StringUtils.equals(prAuthorLogin, each.getLogin()))
-                .findFirst()
-                .orElseThrow(() -> new CollaboratorException.CollaboratorNotFoundException(prAuthorLogin));
-
-        List<Collaborator> modifiableCollaborators = new ArrayList<>(collaborators);
-        modifiableCollaborators.remove(prAuthor);
-
-        return modifiableCollaborators;
-    }
-
     public List<String> getAssigneeLogins(Long repositoryId, Integer assigneeCount, String authorLogin){
         List<Collaborator> collaborators = collaboratorJpaRepository.findAllByRepositoryId(repositoryId);
 
