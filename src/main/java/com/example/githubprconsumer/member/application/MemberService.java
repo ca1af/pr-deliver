@@ -18,16 +18,6 @@ public class MemberService {
         );
     }
 
-    public Member getMemberById(Long memberId){
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new MemberException.MemberNotFoundException(memberId.toString())
-        );
-    }
-
-    public boolean existsByLogin(String login){
-        return memberRepository.existsByLogin(login);
-    }
-
     public Member createIfNotExist(String login) {
         return memberRepository.findByLogin(login)
                 .orElseGet(() -> save(new SignupRequestDto(login)));
