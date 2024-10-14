@@ -4,7 +4,6 @@ import com.example.githubprconsumer.github.application.CollaboratorService;
 import com.example.githubprconsumer.github.application.GithubRepositoryService;
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRequestDto;
 import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
-import com.example.githubprconsumer.github.domain.Collaborator;
 import com.example.githubprconsumer.github.domain.CollaboratorException;
 import com.example.githubprconsumer.github.domain.GithubRepository;
 import com.example.githubprconsumer.github.domain.GithubRepositoryException;
@@ -18,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -136,10 +134,6 @@ class GithubRepositoryServiceTest {
         // Given
         GithubRepository repository = new GithubRepository("owner-login", "repository-full-name");
         jpaRepository.save(repository);
-        Collaborator collaborator = new Collaborator(repository.getId(), "collaborator-login", "avatar-url", "html-url");
-        when(collaboratorService.getCollaborators(repository.getId(), "prAuthor"))
-                .thenReturn(List.of(collaborator));
-
         GithubPRResponse githubPRResponse = new GithubPRResponse("prTitle", "prLink", "prAuthor");
 
         // When
