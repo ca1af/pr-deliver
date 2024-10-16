@@ -29,15 +29,18 @@ public class GithubRepositoryService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
-    public void addGithubRepository(GithubRepositoryAddRequestDto githubRepositoryAddRequestDto){
+    public GithubRepository addGithubRepository(GithubRepositoryAddRequestDto githubRepositoryAddRequestDto){
         Optional<GithubRepository> foundRepository = jpaRepository.findByOwnerLoginAndFullName(githubRepositoryAddRequestDto.login(), githubRepositoryAddRequestDto.fullName());
         if (foundRepository.isPresent()){
-            return;
+            throw new GithubRepositoryException.RepositoryAlreadyExists(githubRepositoryAddRequestDto.login(),
+                    githubRepositoryAddRequestDto.fullName());
         }
 
         GithubRepository githubRepository = githubRepositoryAddRequestDto.toEntity();
         jpaRepository.save(githubRepository);
         collaboratorService.addCollaborators(githubRepository.getId(), githubRepository.getFullName());
+
+        return githubRepository;
     }
 
     @Transactional

@@ -7,6 +7,7 @@ import com.example.githubprconsumer.github.application.dto.RepositoryInfo;
 import com.example.githubprconsumer.github.domain.CollaboratorException;
 import com.example.githubprconsumer.github.domain.GithubRepository;
 import com.example.githubprconsumer.github.domain.GithubRepositoryException;
+import com.example.githubprconsumer.github.domain.GithubRepositoryException.RepositoryAlreadyExists;
 import com.example.githubprconsumer.github.domain.GithubRepositoryJpaRepository;
 import com.example.githubprconsumer.message.application.dto.GithubPRResponse;
 import com.example.githubprconsumer.messenger.application.MessengerService;
@@ -71,7 +72,8 @@ class GithubRepositoryServiceTest {
         GithubRepositoryAddRequestDto dto = new GithubRepositoryAddRequestDto(login, fullName);
 
         // When
-        githubRepositoryService.addGithubRepository(dto);
+        assertThatThrownBy(() -> githubRepositoryService.addGithubRepository(dto))
+                .isInstanceOf(RepositoryAlreadyExists.class);
 
         // Then
         Optional<GithubRepository> foundRepository = jpaRepository.findByOwnerLoginAndFullName(login, fullName);

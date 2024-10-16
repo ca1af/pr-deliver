@@ -1,5 +1,6 @@
 package com.example.githubprconsumer.github.domain;
 
+import com.example.githubprconsumer.global.exception.BadRequestException;
 import com.example.githubprconsumer.global.exception.NotAuthorizedException;
 import com.example.githubprconsumer.global.exception.NotFoundException;
 
@@ -24,6 +25,15 @@ public class GithubRepositoryException extends RuntimeException{
         private static final String NOT_MY_REPOSITORY = "사용자가 소유한 레포지토리가 아닙니다. login: %s, repoFullName: %s";
 
         public NotMyGithubRepositoryException(String login, String repoFullName) {
+            super(String.format(NOT_MY_REPOSITORY, login, repoFullName));
+        }
+    }
+
+    public static class RepositoryAlreadyExists extends BadRequestException {
+
+        private static final String NOT_MY_REPOSITORY = "이미 등록된 레포입니다. login: %s, repoFullName: %s";
+
+        public RepositoryAlreadyExists(String login, String repoFullName) {
             super(String.format(NOT_MY_REPOSITORY, login, repoFullName));
         }
     }

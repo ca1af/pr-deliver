@@ -9,6 +9,7 @@ import com.example.githubprconsumer.github.application.dto.GithubRepositoryAddRe
 import com.example.githubprconsumer.github.application.dto.GithubRepositoryInfo;
 import com.example.githubprconsumer.github.application.dto.InviterInfo;
 import com.example.githubprconsumer.github.domain.GithubBotException;
+import com.example.githubprconsumer.github.domain.GithubRepository;
 import com.example.githubprconsumer.member.application.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -98,6 +100,8 @@ class GithubBotServiceTest {
     void checkAndApproveInvitations_ShouldApproveValidInvitation() {
         // Given
         when(githubApiService.fetchInvitations()).thenReturn(List.of(validInvitation));
+        when(githubRepositoryService.addGithubRepository(any()))
+                .thenReturn(mock(GithubRepository.class));
 
         // When
         githubBotService.checkAndApproveInvitations(validInvitation.githubRepositoryInfo().fullName());

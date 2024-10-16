@@ -25,7 +25,8 @@ public class MessengerService {
             아래 URL을 클릭하시면 메신저 등록이 완료됩니다!
             """;
 
-    private static final String SERVICE_URL = "http://localhost:8080/";
+    // TODO : 서비스 URL 을 프론트쪽으로 돌린다.
+    private static final String SERVICE_URL = "http://ec2-3-36-51-88.ap-northeast-2.compute.amazonaws.com:8080/";
 
     private final MessageService messageService;
 
