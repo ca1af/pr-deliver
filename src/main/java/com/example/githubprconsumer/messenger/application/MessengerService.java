@@ -26,7 +26,7 @@ public class MessengerService {
             """;
 
     // TODO : 서비스 URL 을 프론트쪽으로 돌린다.
-    private static final String SERVICE_URL = "http://ec2-3-36-51-88.ap-northeast-2.compute.amazonaws.com:8080/";
+    private static final String SERVICE_URL = "https://www.pr-deliver.shop/?encryptedWebhookUrl=";
 
     private final MessageService messageService;
 
