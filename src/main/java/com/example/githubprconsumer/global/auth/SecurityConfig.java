@@ -2,6 +2,7 @@ package com.example.githubprconsumer.global.auth;
 
 import com.example.githubprconsumer.global.auth.application.OAuth2UserDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +33,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(
                         authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                                .requestMatchers("/oauth2/login", "/oauth2/success", "/swagger-ui/**", "/v3/api-docs/**", "/tests/login").permitAll()
-                                .requestMatchers("/{path}").permitAll()
+                                .requestMatchers(getAllowedUrls()).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -45,6 +45,18 @@ public class SecurityConfig {
                 .sessionManagement(a -> a.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    private String[] getAllowedUrls() {
+        List<String> allowedUrls = new ArrayList<>();
+        allowedUrls.add("/{path}");
+        allowedUrls.add("/oauth2/login");
+        allowedUrls.add("/oauth2/success");
+        allowedUrls.add("/swagger-ui/**");
+        allowedUrls.add("/v3/api-docs/**");
+        allowedUrls.add("/tests/login");
+        allowedUrls.add("/repositories");
+        return allowedUrls.toArray(new String[0]);
     }
 
     @Bean
