@@ -3,6 +3,7 @@ package com.example.githubprconsumer.global.auth;
 import com.example.githubprconsumer.global.auth.application.OAuth2UserDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -55,7 +54,7 @@ public class SecurityConfig {
         allowedUrls.add("/swagger-ui/**");
         allowedUrls.add("/v3/api-docs/**");
         allowedUrls.add("/tests/login");
-        allowedUrls.add("/repositories");
+        allowedUrls.add("/messengers/applies");
         return allowedUrls.toArray(new String[0]);
     }
 
