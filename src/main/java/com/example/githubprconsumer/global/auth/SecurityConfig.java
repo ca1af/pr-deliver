@@ -2,7 +2,6 @@ package com.example.githubprconsumer.global.auth;
 
 import com.example.githubprconsumer.global.auth.application.OAuth2UserDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -47,15 +46,14 @@ public class SecurityConfig {
     }
 
     private String[] getAllowedUrls() {
-        List<String> allowedUrls = new ArrayList<>();
-        allowedUrls.add("/{path}");
-        allowedUrls.add("/oauth2/login");
-        allowedUrls.add("/oauth2/success");
-        allowedUrls.add("/swagger-ui/**");
-        allowedUrls.add("/v3/api-docs/**");
-        allowedUrls.add("/tests/login");
-        allowedUrls.add("/messengers/applies");
-        return allowedUrls.toArray(new String[0]);
+        return new String[]{
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/tests/login",
+                "/oauth2/login",
+                "/oauth2/success",
+                "/messengers/applies"
+        };
     }
 
     @Bean

@@ -41,7 +41,7 @@ public class MessengerController {
         return CustomApiResponse.ofSuccess(data);
     }
 
-    @GetMapping("/messengers/applies")
+    @PostMapping("/messengers/applies")
     @Operation(summary = "사용자가 추가한 메신저를 활성화시키는 API. 메신저(디스코드 등)에 URL를 발급해서 사용한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 메신저가 활성화되었습니다.", content = @Content)
