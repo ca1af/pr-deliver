@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(servers = {@Server(url = "https://pr-deliver.shop", description = "PR-Deliver")})
+@OpenAPIDefinition(servers = {@Server(url = "https://www.pr-deliver.shop/", description = "PR-Deliver")})
 public class GithubPrConsumerApplication {
 
     public static void main(String[] args) {
