@@ -11,8 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,8 +47,7 @@ public class MessengerController {
             @ApiResponse(responseCode = "200", description = "성공적으로 메신저가 활성화되었습니다.", content = @Content)
     })
     public void activateMessenger(@RequestParam String encryptedWebhookUrl){
-        // URL 디코딩 처리
-        String decodedUrl = URLDecoder.decode(encryptedWebhookUrl, StandardCharsets.UTF_8);
+        String decodedUrl = encryptedWebhookUrl.replace(" ", "+");
         log.info("메신저 활성화 요청, 디코딩된 객체: {}", decodedUrl);
 
         messengerService.activateMessenger(decodedUrl);
