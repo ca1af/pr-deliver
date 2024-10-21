@@ -26,7 +26,7 @@ public class MessengerService {
             """;
 
     // TODO : 서비스 URL 을 프론트쪽으로 돌린다.
-    private static final String SERVICE_URL = "https://www.pr-deliver.shop/messengers/applies?encryptedWebhookUrl=";
+    private static final String SERVICE_URL = "http://localhost:3000/activate?encryptedWebhookUrl=";
 
     private final MessageService messageService;
 
